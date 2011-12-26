@@ -1,0 +1,10 @@
+development:
+  database: "mysql://flickr:archivr@localhost/flickrarchivr"
+  flickr_consumer_key:
+  flickr_consumer_secret:
+  ga_id:
+production:
+  database: "mysql://flickr:archivr@localhost/flickrarchivr"
+  flickr_consumer_key:
+  flickr_consumer_secret:
+  ga_id:
