@@ -23,8 +23,12 @@ namespace '/auth' do
       redirect '/me'
     rescue FlickRaw::FailedResponse => e
       puts "Authentication Failed : #{e.msg}"
-      redirect '/'
+      redirect '/auth/flickr/error'
     end
+  end
+
+  get '/flickr/error' do
+    erb :error
   end
 
 end
