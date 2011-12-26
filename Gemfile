@@ -1,8 +1,9 @@
 source :rubygems
-gem 'sinatra',             '1.2.6',  :require => 'sinatra/base'
-gem 'sinatra-namespace',   '0.6.1',  :require => 'sinatra/namespace'
-gem 'sinatra-flash',       '0.3.0',  :require => 'sinatra/flash'
-gem 'erubis',              '2.7.0'
+gem 'sinatra',             '1.3.1'
+gem 'sinatra-contrib',     '1.3.1',        :require => 'sinatra/namespace'
+gem 'sinatra-flash',       '0.3.0',        :require => 'sinatra/flash'
+gem 'sinatra-support',     '1.2.2',        :require => "sinatra/support"
+gem 'erubis'
 
 gem 'dm-core',             '1.1.0'
 gem 'dm-timestamps',       '1.1.0'

@@ -3,8 +3,10 @@ development:
   flickr_consumer_key:
   flickr_consumer_secret:
   ga_id:
+  photo_root: /Users/you/Pictures/Flickr
 production:
   database: "mysql://flickr:archivr@localhost/flickrarchivr"
   flickr_consumer_key:
   flickr_consumer_secret:
   ga_id:
+  photo_root: /Users/you/Pictures/Flickr

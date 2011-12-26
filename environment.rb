@@ -5,62 +5,49 @@ Bundler.require
 require File.join(File.expand_path(File.dirname(__FILE__)), 'helpers.rb')
 Dir.glob(['lib', 'models'].map! {|d| File.join File.expand_path(File.dirname(__FILE__)), d, '*.rb'}).each {|f| require f}
 
+SiteConfig = FlickrArchivr::SiteConfig.new YAML.load_file('config.yml')[Sinatra::Base.environment.to_s] if File.exists?('config.yml')
+
 puts "Starting in #{Sinatra::Base.environment} mode.."
 
-class Controller < Sinatra::Base
+helpers Sinatra::UserAgentHelpers
 
-  ##
-  # Application specific configuration
-  ##
+set :raise_errors,    true
+set :show_exceptions, false
+set :method_override, true
+set :public_folder,   'public'
 
-  set :sessions,                 true
-  set :session_secret,           'dfje2D44jJ'
+use Rack::Session::Cookie, :key => 'website',
+                           :path => '/',
+                           :expire_after => 2592000,
+                           :secret => 'YQjEEqd8'
 
-  ##
-  # The rest of this you shouldn't need to change (initially).
-  ##
-
-  set :raise_errors,    true
-  set :show_exceptions, false
-  set :method_override, true
-  set :public,          'public'
-  set :erubis,          :escape_html => true
-
-  set :root, File.expand_path(File.join(File.dirname(__FILE__)))
-
-  register Sinatra::Namespace
-  register Sinatra::Flash
-
-  configure do
-    config_hash = YAML.load_file(File.join(root, 'config.yml'))[environment.to_s]
-    GA_ID = config_hash['ga_id']
-    FlickRaw.api_key = config_hash['flickr_consumer_key']
-    FlickRaw.shared_secret = config_hash['flickr_consumer_secret']
-    DataMapper.finalize
-    DataMapper.setup :default, config_hash['database']
-    # DataMapper.auto_upgrade!
-    DataMapper::Model.raise_on_save_failure = true
-  end
-
-  configure :development do
-    use Rack::CommonLogger
-    Bundler.require :development
-  end
-
-  configure :test do
-  end
-
-  configure :production do
-  end
-
-  not_found do
-    erubis :'404'
-  end
-
-  error do
-    # Implement error reporting such as Airbrake (formerly Hoptoad) here.
-    erubis :'500'
-  end
+configure do
+  FlickRaw.api_key = SiteConfig.flickr_consumer_key
+  FlickRaw.shared_secret = SiteConfig.flickr_consumer_secret
+  DataMapper.finalize
+  DataMapper.setup :default, SiteConfig.database
+  # DataMapper.auto_upgrade!
+  DataMapper::Model.raise_on_save_failure = true
 end
 
-require File.join('.', 'controller.rb')
+configure :development do
+  use Rack::CommonLogger
+  Bundler.require :development
+end
+
+configure :test do
+end
+
+configure :production do
+end
+
+not_found do
+  erb :'404'
+end
+
+error do
+  # Implement error reporting such as Airbrake here.
+  erb :'500'
+end
+
+Dir.glob(['controllers/**'].map! {|d| File.join d, '*.rb'}).each {|f| require_relative f}
