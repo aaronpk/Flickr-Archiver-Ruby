@@ -1,12 +1,12 @@
-require 'bundler'
-Bundler.setup
-require "rake/testtask"
+def init(env=ENV['RACK_ENV']); require File.join('.', 'environment.rb') end
 
-desc "Run all tests"
-Rake::TestTask.new do |t|
-  t.libs << "spec"
-  t.test_files = FileList['spec/*_spec.rb']
-  t.verbose = true
+namespace :db do
+  task :bootstrap do
+    init
+    DataMapper.auto_migrate!
+  end
+  task :migrate do
+    init
+    DataMapper.auto_upgrade!
+  end
 end
-
-task :default => :test

@@ -1,3 +1,17 @@
 body {
   padding-top: 40px;
 }
+
+.photos .private a {
+  background-color: #EF9999;
+  border-color: #E45757;
+}
+
+.photos .family a, .photos .friends a {
+  background-color: #FBDC7B;
+  border-color: #FACD27;
+}
+
+.photos .public a {
+  
+}

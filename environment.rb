@@ -26,7 +26,10 @@ configure do
   FlickRaw.shared_secret = SiteConfig.flickr_consumer_secret
   DataMapper.finalize
   DataMapper.setup :default, SiteConfig.database
-  # DataMapper.auto_upgrade!
+
+  #DataMapper.auto_migrate! # Create the tables
+  #DataMapper.auto_upgrade! # Tries to alter tables preserving data
+
   DataMapper::Model.raise_on_save_failure = true
 end
 
