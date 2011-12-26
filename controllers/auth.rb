@@ -14,10 +14,12 @@ namespace '/auth' do
     puts params
     begin
       @flickr.get_access_token(session[:request_token], session[:request_token_secret], params[:oauth_verifier])
-      login = @flickr.auth.checkToken
-      puts "You are now authenticated as #{login.username}"
+      login = @flickr.test.login
+      puts "You are now authenticated as #{login.username} with token #{@flickr.access_token} and secret #{@flickr.access_secret}"
       session[:access_token] = @flickr.access_token
       session[:access_token_secret] = @flickr.access_secret
+      session[:request_token] = nil
+      session[:request_token_secret] = nil
       redirect '/me'
     rescue FlickRaw::FailedResponse => e
       puts "Authentication Failed : #{e.msg}"
