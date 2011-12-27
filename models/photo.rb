@@ -57,7 +57,7 @@ class Photo
 
   property :owner, String, :length => 20
   property :secret, String, :length => 20
-  property :raw, String
+  property :raw, Text
 
   def self.sizes
     ['sq','t','s','m','z','l','o']
