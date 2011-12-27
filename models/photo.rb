@@ -59,6 +59,42 @@ class Photo
   property :secret, String, :length => 20
   property :raw, Text
 
+  def get_class
+    klass = "public"
+    klass = "private" if self.public == 0 && self.friends == 0 && self.family == 0
+    klass = "friend" if self.friends == 1
+    klass = "family" if self.family == 1
+    klass = "family friend" if self.family == 1 && self.friends == 1
+    klass
+  end
+
+  # Returns the relative path for the photo at the requested size.
+  # This path is safe for URLs as well as filesystem access
+  def path(size)
+    self.date_taken.strftime('%Y/%m/%d/') + size + '/'
+  end
+
+  # Returns just the filename portion for the photo. This will be 
+  # appended to URL and filesystem paths.
+  def filename(size)
+    self.filename_from_title + '.jpg'
+  end
+
+  # Returns the absolute path to the folder containing the jpg
+  def abs_path(size)
+    SiteConfig.photo_root + self.path(size) + self.filename(size)
+  end
+
+  # Returns the full URL to the folder containing the jpg
+  def full_url(size)
+    SiteConfig.photo_url_root + self.path(size) + self.filename(size)
+  end
+
+  # Generate a URL-and-filesystem-safe filename given the photo title
+  def filename_from_title
+    self.title.gsub(/[^A-Za-z0-9_-]/, '-')
+  end
+
   def self.sizes
     ['sq','t','s','m','z','l','o']
   end

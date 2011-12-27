@@ -1,4 +1,10 @@
 namespace '/photos' do
+
+  get '/?' do
+    @photos = @user.photos
+    erb :'photos/index'
+  end
+
   get '/recent' do
     begin
       since = Time.now.to_i - 86400

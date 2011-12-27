@@ -20,3 +20,5 @@ class Tag
     tag
   end
 end
+
+# TODO: Move flickr_id to the `photo_tags` table

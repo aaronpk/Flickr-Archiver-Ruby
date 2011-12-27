@@ -33,7 +33,7 @@ class FlickrImport
 
     # Begin downloading one page of photos starting at the last timestamp
 
-    photos = @flickr.people.getPhotos :user_id => "me", :per_page => 1, :max_upload_date => @user.import_timestamp, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
+    photos = @flickr.people.getPhotos :user_id => "me", :per_page => 500, :max_upload_date => @user.import_timestamp, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
     #photos = @flickr.people.getPhotos :min_upload_date => "2011-12-13", :user_id => "me", :per_page => 1, :max_upload_date => "2011-12-14", :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
     photos.each do |p|
       if Photo.first :flickr_id => p.id, :user => @user
@@ -55,7 +55,7 @@ class FlickrImport
         photoTags = @flickr.tags.getListPhoto :photo_id => p.id
         # puts photoTags.to_hash
         photoTags.tags.tag.each do |photoTag|
-          tag = Tag.first :flickr_id => photoTag.id, :user => @user
+          tag = Tag.first :tag => photoTag._content, :user => @user
           if tag.nil?
             tag = Tag.create_from_flickr photoTag, @user
           end
@@ -64,7 +64,7 @@ class FlickrImport
       end
       photoContexts = @flickr.photos.getAllContexts :photo_id => p.id
 
-      if photoContexts && photoContexts.set
+      if photoContexts && photoContexts.respond_to?('set')
         photoContexts.set.each do |photoSet|
           set = Set.first :flickr_id => photoSet.id
           if set.nil?
