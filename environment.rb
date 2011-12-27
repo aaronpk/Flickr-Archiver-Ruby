@@ -45,12 +45,12 @@ configure :production do
 end
 
 not_found do
-  erb :'404'
+  erb :'error/404'
 end
 
 error do
   # Implement error reporting such as Airbrake here.
-  erb :'500'
+  erb :'error/500'
 end
 
 Dir.glob(['controllers/**'].map! {|d| File.join d, '*.rb'}).each {|f| require_relative f}

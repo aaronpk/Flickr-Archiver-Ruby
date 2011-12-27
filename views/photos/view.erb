@@ -1,0 +1,38 @@
+<div class="container">
+
+<div class="row">
+  <div class="span16">
+    <h2><%== @photo.title %></h2>
+  </div>
+</div>
+
+<div class="row">
+
+  <div class="span11">
+
+    <img src="<%= @photo.full_url('z') %>" <%= @photo.wh_attr('z') %>  />
+
+  </div><!-- left col -->
+  <div class="span5">
+
+    <div class="sidebar-widget">
+      <h3>People</h3>
+      <ul>
+        <li><a href="/person/1/Aaron-Parecki">Aaron Parecki</li>
+      </ul>
+    </div>
+
+    <div class="sidebar-widget">
+      <h3>Tags</h3>
+      <ul class="tags">
+        <% @photo.tags.each do |tag| %>
+          <li><a href="<%= tag.page @photo %>"><%= tag.name %></a></li>
+        <% end %>
+      </ul>
+    </div>
+
+  </div><!-- right col-->
+
+</div><!-- row -->
+
+</div><!-- container -->

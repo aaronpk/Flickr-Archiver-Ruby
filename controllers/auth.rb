@@ -1,4 +1,5 @@
 namespace '/auth' do
+
   get '/flickr' do
     # Send to the Flickr auth URL
     session[:access_token] = nil
@@ -42,5 +43,5 @@ namespace '/auth' do
     session[:access_token] = nil
     erb :error
   end
-
+  
 end

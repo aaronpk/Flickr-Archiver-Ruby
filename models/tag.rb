@@ -10,6 +10,18 @@ class Tag
   property :updated_at, DateTime
   has n, :photos, :through => Resource
 
+  # Returns the relative link to this item's page on this website
+  def page(photo=nil)
+    "/#{self.user.username}/tag/#{self.id}/#{self.tag}" + (photo.nil? ? "" : "?show=#{photo.id}")
+  end
+
+  # Raise an exception if the given user is not authorized to view this photo.
+  # Check both logged-out visitors, as well as cross-user permissions
+  def is_authorized(user, auth_user)
+    raise FlickrArchivr::ForbiddenError if self.user.id != user.id
+    true
+  end
+
   def self.create_from_flickr(obj, user)
     tag = Tag.new
     tag.user = user

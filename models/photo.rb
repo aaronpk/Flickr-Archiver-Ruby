@@ -90,9 +90,39 @@ class Photo
     SiteConfig.photo_url_root + self.path(size) + self.filename(size)
   end
 
-  # Generate a URL-and-filesystem-safe filename given the photo title
+  # Generate a URL-and-filesystem-safe filename given the photo title.
+  # Remove trailing file extension, and remove all non-basic characters.
   def filename_from_title
-    self.title.gsub(/[^A-Za-z0-9_-]/, '-')
+    self.title.sub(/\.(jpg|png|gif)$/i, '').gsub(/[^A-Za-z0-9_-]/, '-')
+  end
+
+  # Returns the relative link to this photo's page on this website
+  def page
+    "/#{self.user.username}/photo/#{self.id}/#{self.filename_from_title}"
+  end
+
+  # Return attributes for width and height for inserting into an <img> tag
+  def wh_attr(size)
+    if self.send('width_'+size)
+      "width=\"#{self.send('width_'+size)}\" height=\"#{self.send('height_'+size)}\""
+    else
+      ''
+    end
+  end
+
+  # Raise an exception if the given user is not authorized to view this photo.
+  # Check both logged-out visitors, as well as cross-user permissions.
+  # user is the requested user, auth_user is the logged-in user
+  def is_authorized(user, auth_user)
+    if auth_user
+      # Disallow if the photo is not public and the authenticated user does not own the photo
+      raise FlickrArchivr::NotFoundError if self.user_id != user.id
+      raise FlickrArchivr::ForbiddenError if !self.public && self.user_id != auth_user.id
+    else
+      # Disallow if the photo is not public or if the requested user doesn't match the photo's owner
+      raise FlickrArchivr::ForbiddenError if !self.public || self.user_id != user.id
+    end
+    true
   end
 
   def self.sizes

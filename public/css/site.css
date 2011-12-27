@@ -2,6 +2,33 @@ body {
   padding-top: 40px;
 }
 
+/**
+ * Sidebar
+ */
+
+.sidebar-widget h3 {
+  border-bottom: 1px #c8c8c8 solid;
+}
+
+.sidebar-widget ul {
+  margin-top: 4px;
+}
+
+.sidebar-widget ul.tags {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+.sidebar-widget .tags li {
+  float: left;
+  margin: 4px 0 0 0;
+  padding: 0 20px 0 0;
+}
+
+/**
+ * Photo Privacy
+ */
+
 .photos .private a {
   background-color: #EF9999;
   border-color: #E45757;

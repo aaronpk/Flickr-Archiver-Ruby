@@ -1,11 +1,32 @@
-namespace '/photos' do
+def load_user(username)
+  @user = User.first :username => username
+  raise FlickrArchivr::NotFoundError.new if @user.nil?
+end
 
-  get '/?' do
+get '/:username/test/:id' do
+  begin
+    load_user params[:username]
+    puts params
+    'TESTING'
+  rescue FlickrArchivr::Error => e
+    erb :"#{e.erb_template}"
+  end
+end
+
+get '/:username/?' do
+  begin
+    load_user params[:username]
+    # TODO: Filter public/private based on whether the user is logged in
     @photos = @user.photos
     erb :'photos/index'
+  rescue FlickrArchivr::Error => e
+    erb :"#{e.erb_template}"
   end
+end
 
-  get '/recent' do
+get '/:username/recent' do
+  begin
+    load_user params[:username]
     begin
       since = Time.now.to_i - 86400
       photos = @flickr.photos.recentlyUpdated :min_date => since, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
@@ -26,12 +47,30 @@ namespace '/photos' do
       @error = e
       erb :flickr_error
     end
+  rescue FlickrArchivr::Error => e
+    erb :"#{e.erb_template}"
   end
 end
 
-# namespace '/photo' do
-#   get '/id' do
-#     puts params[:id]
-#     erb :'photos/recent'
-#   end
-# end
+# TODO: Filter public/private based on whether the user is logged in
+get '/:username/photo/:id/?*' do
+  begin
+    load_user params[:username]
+    @photo = Photo.first :id => params[:id]
+    raise FlickrArchivr::NotFoundError.new if @photo.nil?
+    @photo.is_authorized @user, @me
+    erb :'photos/view'
+  rescue FlickrArchivr::Error => e
+    erb :"#{e.erb_template}"
+  end
+end
+
+get '/:username/person/:id/?*' do
+  begin
+    load_user params[:username]
+    @person = Person.first :id => params[:id], :user => @user
+    erb :'person/view'
+  rescue FlickrArchivr::Error => e
+    erb :"#{e.erb_template}"
+  end
+end

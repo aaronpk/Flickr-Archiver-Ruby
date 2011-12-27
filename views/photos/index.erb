@@ -7,7 +7,11 @@
 
   <ul class="media-grid photos">
     <% @photos.each do |photo| %>
-      <li class="<%= photo.get_class %>"><a href=""><img class="thumbnail" src="<%= photo.full_url('sq') %>" width="75" height="75" /></a></li>
+      <li class="<%= photo.get_class %>">
+        <a href="<%= photo.page %>">
+          <img class="thumbnail" src="<%= photo.full_url('sq') %>" <%= photo.wh_attr('sq') %> />
+        </a>
+      </li>
     <% end %>
   </ul>
 
