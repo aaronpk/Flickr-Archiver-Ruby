@@ -61,10 +61,10 @@ class Photo
 
   def get_class
     klass = "public"
-    klass = "private" if self.public == 0 && self.friends == 0 && self.family == 0
-    klass = "friend" if self.friends == 1
-    klass = "family" if self.family == 1
-    klass = "family friend" if self.family == 1 && self.friends == 1
+    klass = "private" if !self.public && !self.friends && !self.family
+    klass = "friend" if self.friends
+    klass = "family" if self.family
+    klass = "family friend" if self.family && self.friends
     klass
   end
 
