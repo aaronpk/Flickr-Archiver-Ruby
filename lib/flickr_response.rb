@@ -12,4 +12,14 @@ class Response
     hash
   end
 end
+
+# class ResponseList
+#   def to_hash
+#     arr = []
+#     @a.each {|v|
+#       arr << v.to_hash
+#     }
+#     arr
+#   end
+# end
 end

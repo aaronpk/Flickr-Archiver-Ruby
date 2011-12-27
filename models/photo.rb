@@ -4,6 +4,7 @@ class Photo
 
   belongs_to :user
   has n, :tags, :through => Resource
+  has n, :sets, :through => Resource
   has n, :places, :through => Resource
   has n, :people, :through => :person_photo
 
@@ -24,6 +25,7 @@ class Photo
   property :family, Boolean
 
   property :url, String, :length => 255
+  property :local_path, String, :length => 255
 
   property :url_sq, String, :length => 255
   property :width_sq, Integer

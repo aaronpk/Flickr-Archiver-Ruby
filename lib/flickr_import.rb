@@ -33,7 +33,8 @@ class FlickrImport
 
     # Begin downloading one page of photos starting at the last timestamp
 
-    photos = @flickr.people.getPhotos :min_upload_date => "2011-12-13", :user_id => "me", :per_page => 1, :max_upload_date => @user.import_timestamp, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
+    photos = @flickr.people.getPhotos :user_id => "me", :per_page => 1, :max_upload_date => @user.import_timestamp, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
+    #photos = @flickr.people.getPhotos :min_upload_date => "2011-12-13", :user_id => "me", :per_page => 1, :max_upload_date => "2011-12-14", :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
     photos.each do |p|
       if Photo.first :flickr_id => p.id, :user => @user
         puts "Photo #{p.id} already exists"
@@ -52,7 +53,7 @@ class FlickrImport
       end
       if flickrPhoto.tags
         photoTags = @flickr.tags.getListPhoto :photo_id => p.id
-        puts photoTags.to_hash
+        # puts photoTags.to_hash
         photoTags.tags.tag.each do |photoTag|
           tag = Tag.first :flickr_id => photoTag.id, :user => @user
           if tag.nil?
@@ -61,6 +62,18 @@ class FlickrImport
           photo.tags << tag
         end
       end
+      photoContexts = @flickr.photos.getAllContexts :photo_id => p.id
+
+      if photoContexts && photoContexts.set
+        photoContexts.set.each do |photoSet|
+          set = Set.first :flickr_id => photoSet.id
+          if set.nil?
+            set = Set.create_from_flickr photoSet, @user
+          end
+          photo.sets << set
+        end
+      end
+
       photo.save
     end
   end
