@@ -33,7 +33,7 @@ class FlickrImport
 
     # Begin downloading one page of photos starting at the last timestamp
 
-    photos = @flickr.people.getPhotos :user_id => "me", :per_page => 1, :max_upload_date => @user.import_timestamp, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
+    photos = @flickr.people.getPhotos :min_upload_date => "2011-12-13", :user_id => "me", :per_page => 1, :max_upload_date => @user.import_timestamp, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
     photos.each do |p|
       if Photo.first :flickr_id => p.id, :user => @user
         puts "Photo #{p.id} already exists"
@@ -44,13 +44,20 @@ class FlickrImport
       photo = Photo.create_from_flickr flickrPhoto, @user
       photo.url = FlickRaw.url_photopage(flickrPhoto)
       Photo.sizes.each do |s|
-        photo.send('url_'+s+'=', p.send('url_'+s))
-        photo.send('width_'+s+'=', p.send('width_'+s))
-        photo.send('height_'+s+'=', p.send('height_'+s))
+        if p.respond_to?('url_'+s)
+          photo.send('url_'+s+'=', p.send('url_'+s))
+          photo.send('width_'+s+'=', p.send('width_'+s))
+          photo.send('height_'+s+'=', p.send('height_'+s))
+        end
       end
       if flickrPhoto.tags
-        flickrPhoto.tags.tag.each do |photoTag|
-          tag = Tag.first_or_create :tag => photoTag, :user => @user
+        photoTags = @flickr.tags.getListPhoto :photo_id => p.id
+        puts photoTags.to_hash
+        photoTags.tags.tag.each do |photoTag|
+          tag = Tag.first :flickr_id => photoTag.id, :user => @user
+          if tag.nil?
+            tag = Tag.create_from_flickr photoTag, @user
+          end
           photo.tags << tag
         end
       end

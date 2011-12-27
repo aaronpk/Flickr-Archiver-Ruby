@@ -4,6 +4,8 @@ class Photo
 
   belongs_to :user
   has n, :tags, :through => Resource
+  has n, :places, :through => Resource
+  has n, :people, :through => :person_photo
 
   property :flickr_id, String, :length => 50, :index => true
 
@@ -68,7 +70,7 @@ class Photo
     photo.date_taken = Time.parse obj.dates.taken
     photo.date_uploaded = Time.at obj.dates.posted.to_i
     photo.last_update = Time.at obj.dates.lastupdate.to_i if obj.dates.lastupdate
-    if obj.location
+    if obj.respond_to?('location')
       photo.latitude = obj.location.latitude
       photo.longitude = obj.location.longitude
       photo.accuracy = obj.location.accuracy
