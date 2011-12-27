@@ -8,10 +8,10 @@ gem 'sinatra-support',     '1.2.2',        :require => "sinatra/support"
 gem 'rainbows',            '4.3.1',        :require => nil
 gem 'erubis'
 
-gem 'dm-core',             '1.1.0'
-gem 'dm-timestamps',       '1.1.0'
-gem 'dm-migrations',       '1.1.0'
-gem 'dm-mysql-adapter',    '1.1.0'
+gem 'dm-core'
+gem 'dm-timestamps'
+gem 'dm-migrations'
+gem 'dm-mysql-adapter'
 
 gem 'rake',                '0.9.2',  :require => nil
 gem 'hashie'

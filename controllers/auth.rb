@@ -25,7 +25,7 @@ namespace '/auth' do
       # Retrieve the user or create a new user account
       user = User.first :username => login.username
       if user.nil?
-        user = User.new :username => login.username, :access_token => @flickr.access_token, :access_secret => @flickr.access_secret
+        user = User.new :username => login.username, :nsid => login.id, :access_token => @flickr.access_token, :access_secret => @flickr.access_secret
         user.save
       end
       session[:user_id] = user.id

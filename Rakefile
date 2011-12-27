@@ -10,3 +10,10 @@ namespace :db do
     DataMapper.auto_upgrade!
   end
 end
+
+namespace :flickr do
+  task :import, :username do |t, username|
+    init
+    FlickrImport.do_import username
+  end
+end

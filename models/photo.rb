@@ -1,7 +1,11 @@
 class Photo
   include DataMapper::Resource
   property :id, Serial
-  property :flickr_id, String, :index => true
+
+  belongs_to :user
+  has n, :tags, :through => Resource
+
+  property :flickr_id, String, :length => 50, :index => true
 
   property :title, String, :length => 255
   property :description, Text
@@ -16,6 +20,8 @@ class Photo
   property :public, Boolean
   property :friends, Boolean
   property :family, Boolean
+
+  property :url, String, :length => 255
 
   property :url_sq, String, :length => 255
   property :width_sq, Integer
@@ -47,5 +53,32 @@ class Photo
 
   property :owner, String, :length => 20
   property :secret, String, :length => 20
-  property :raw, Text
+  property :raw, String
+
+  def self.sizes
+    ['sq','t','s','m','z','l','o']
+  end
+
+  def self.create_from_flickr(obj, user)
+    photo = Photo.new
+    photo.user = user
+    photo.flickr_id = obj.id
+    photo.title = obj.title
+    photo.description = obj.description
+    photo.date_taken = Time.parse obj.dates.taken
+    photo.date_uploaded = Time.at obj.dates.posted.to_i
+    photo.last_update = Time.at obj.dates.lastupdate.to_i if obj.dates.lastupdate
+    if obj.location
+      photo.latitude = obj.location.latitude
+      photo.longitude = obj.location.longitude
+      photo.accuracy = obj.location.accuracy
+    end
+    photo.public = obj.visibility.ispublic
+    photo.friends = obj.visibility.isfriend
+    photo.family = obj.visibility.isfamily
+    photo.owner = obj.owner.nsid
+    photo.secret = obj.secret
+    photo.raw = obj.to_hash.to_json
+    photo
+  end
 end
