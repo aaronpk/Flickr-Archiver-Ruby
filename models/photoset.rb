@@ -7,7 +7,7 @@ class Photoset
 
   property :flickr_id, String, :length => 50, :index => true
 
-  property :title, String, :length => 100
+  property :title, String, :length => 255
   property :description, Text
   property :secret, String, :length => 50
 

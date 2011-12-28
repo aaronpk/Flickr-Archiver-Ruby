@@ -3,8 +3,8 @@ class Tag
   property :id, Serial
   belongs_to :user
   property :flickr_id, String, :length => 50, :index => true
-  property :tag, String, :length => 50, :index => true    # _content
-  property :name, String, :length => 50                   # raw
+  property :tag, String, :length => 255, :index => true    # _content
+  property :name, String, :length => 255                   # raw
   property :machine_tag, Boolean, :default => false
   property :created_at, DateTime
   property :updated_at, DateTime

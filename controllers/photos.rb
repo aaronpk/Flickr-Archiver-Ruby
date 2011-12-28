@@ -16,8 +16,11 @@ end
 get '/:username/?' do
   begin
     load_user params[:username]
-    # TODO: Filter public/private based on whether the user is logged in
-    @photos = @user.photos
+    if @me && @me.id == @user.id 
+      @photos = @user.photos
+    else
+      @photos = @user.photos.all(:public => true)
+    end
     erb :'photos/index'
   rescue FlickrArchivr::Error => e
     erb :"#{e.erb_template}"
@@ -104,4 +107,6 @@ get '/:username/tag/:id/?*' do
   end
 end
 
-
+def format_text(text) 
+  text.gsub(/\n/, '<br />')
+end

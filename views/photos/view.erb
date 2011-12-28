@@ -11,12 +11,13 @@
   <div class="span11">
 
     <p><img src="<%= @photo.full_url('z') %>" <%= @photo.wh_attr('z') %>  /></p>
-    <p><%== @photo.description %></p>
+    <p><%= format_text @photo.description %></p>
 
   </div><!-- left col -->
   <div class="span5">
 
     <div class="sidebar-widget">
+      <p><a href="<%= @photo.url %>">view on flickr</a></p>
       <p>Taken on <%= @photo.date_taken.strftime "%B %e, %Y" %>
     </div>
 

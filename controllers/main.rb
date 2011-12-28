@@ -11,7 +11,6 @@ before do
     @flickr = nil
   end
 
-  session[:user_id] = 1
   if session[:user_id]
     @me = User.get session[:user_id]
   else

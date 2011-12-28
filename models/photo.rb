@@ -71,18 +71,23 @@ class Photo
   # Returns the relative path for the photo at the requested size.
   # This path is safe for URLs as well as filesystem access
   def path(size)
-    self.date_taken.strftime('%Y/%m/%d/') + size + '/'
+    self.user.username + '/' + self.date_taken.strftime('%Y/%m/%d/') + size + '/'
   end
 
   # Returns just the filename portion for the photo. This will be 
   # appended to URL and filesystem paths.
   def filename(size)
-    self.filename_from_title + '.jpg'
+    self.flickr_id + '-' + self.filename_from_title + '.jpg'
   end
 
   # Returns the absolute path to the folder containing the jpg
   def abs_path(size)
-    SiteConfig.photo_root + self.path(size) + self.filename(size)
+    SiteConfig.photo_root + self.path(size)
+  end
+
+  # Returns the absolute filename to the jpg
+  def abs_filename(size)
+    self.abs_path(size) + self.filename(size)
   end
 
   # Returns the full URL to the folder containing the jpg
@@ -93,7 +98,7 @@ class Photo
   # Generate a URL-and-filesystem-safe filename given the photo title.
   # Remove trailing file extension, and remove all non-basic characters.
   def filename_from_title
-    self.title.sub(/\.(jpg|png|gif)$/i, '').gsub(/[^A-Za-z0-9_-]/, '-')
+    self.title.sub(/\.(jpg|png|gif)$/i, '').gsub(/[^A-Za-z0-9_-]/, '-').sub(/-$/, '').gsub(/-+/, '-')
   end
 
   # Returns the relative link to this photo's page on this website

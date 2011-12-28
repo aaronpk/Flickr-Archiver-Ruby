@@ -18,7 +18,7 @@ class Person
     if self.username
       self.username
     else
-      self.realname.gsub(/[^A-Za-z0-9_-]/, '-')
+      self.realname.gsub(/[^A-Za-z0-9_-]/, '-').gsub(/-+/, '-')
     end
   end
 

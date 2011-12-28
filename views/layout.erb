@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/css/site.css" type="text/css" />
     <meta name="description" content="Archive your entire Flickr photo stream" />
     <script src="/js/libs/jquery-1.6.4.min.js" type="text/javascript"></script>
+    <script src="/js/libs/bootstrap-dropdown.js" type="text/javascript"></script>
     <% if SiteConfig.ga_id %>
       <script type="text/javascript">
         var _gaq = _gaq || [];
@@ -26,12 +27,19 @@
     <div class="topbar" data-scrollspy="scrollspy">
       <div class="topbar-inner">
         <div class="container">
-          <h3><a href="/">Flickr Archivr</a></h3>
-          <!--
-          <ul class="nav">
-            <li class="active"><a href="#home">Home</a></li>
-          </ul>
-          -->
+          <h3><a href="/<%= (@me ? @me.username : '') %>">Flickr Archivr</a></h3>
+          <% if @me %>
+            <ul class="nav secondary-nav">
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle"><%= @me.username %></a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a href="/photos">Home</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          <% end %>
         </div>
       </div>
     </div>

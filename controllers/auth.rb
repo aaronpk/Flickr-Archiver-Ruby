@@ -31,7 +31,7 @@ namespace '/auth' do
       end
       session[:user_id] = user.id
 
-      redirect '/me'
+      redirect '/' + user.username
     rescue FlickRaw::FailedResponse => e
       puts "Authentication Failed : #{e.msg}"
       redirect '/auth/flickr/error'
@@ -43,5 +43,5 @@ namespace '/auth' do
     session[:access_token] = nil
     erb :error
   end
-  
+
 end

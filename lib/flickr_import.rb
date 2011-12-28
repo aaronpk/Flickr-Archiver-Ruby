@@ -33,8 +33,8 @@ class FlickrImport
 
     # Begin downloading one page of photos starting at the last timestamp
 
-    #photos = @flickr.people.getPhotos :user_id => "me", :per_page => 500, :max_upload_date => @user.import_timestamp, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
-    photos = @flickr.people.getPhotos :min_upload_date => "2011-12-13", :user_id => "me", :per_page => 1, :max_upload_date => "2011-12-14", :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
+    photos = @flickr.people.getPhotos :user_id => "me", :per_page => 100, :max_upload_date => @user.import_timestamp, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
+    #photos = @flickr.people.getPhotos :min_upload_date => "2011-12-13", :user_id => "me", :per_page => 1, :max_upload_date => "2011-12-14", :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
     photos.each do |p|
       if Photo.first :flickr_id => p.id, :user => @user
         puts "Photo #{p.id} already exists"
@@ -48,9 +48,22 @@ class FlickrImport
       Photo.sizes.each do |s|
         if p.respond_to?('url_'+s)
           flickrURL = p.send('url_'+s)
+
+          # Store the original flickr URLs
           photo.send('url_'+s+'=', flickrURL)
           photo.send('width_'+s+'=', p.send('width_'+s))
           photo.send('height_'+s+'=', p.send('height_'+s))
+
+          # Make the parent folder
+          FileUtils.mkdir_p(photo.abs_path(s))
+          local_abs_filename = photo.abs_filename(s)
+
+          # Download file from Flickr
+          puts "Downloading #{flickrURL} to #{local_abs_filename}"
+          `curl -o #{local_abs_filename} #{flickrURL}`
+          puts "...done"
+
+          photo.local_path = photo.path("%") + photo.filename("%")
         end
       end
 
