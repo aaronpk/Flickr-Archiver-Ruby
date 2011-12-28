@@ -118,20 +118,21 @@ class Photo
   # Raise an exception if the given user is not authorized to view this photo.
   # Check both logged-out visitors, as well as cross-user permissions.
   # user is the requested user, auth_user is the logged-in user
-  def is_authorized(user, auth_user)
+  def verify_permission!(user, auth_user)
+    raise FlickrArchivr::NotFoundError if self.user_id != user.id
     if auth_user
       # Disallow if the photo is not public and the authenticated user does not own the photo
-      raise FlickrArchivr::NotFoundError if self.user_id != user.id
       raise FlickrArchivr::ForbiddenError if !self.public && self.user_id != auth_user.id
     else
-      # Disallow if the photo is not public or if the requested user doesn't match the photo's owner
-      raise FlickrArchivr::ForbiddenError if !self.public || self.user_id != user.id
+      # Disallow if the photo is not public
+      raise FlickrArchivr::ForbiddenError if !self.public
     end
     true
   end
 
   def self.sizes
-    ['sq','t','s','m','z','l','o']
+    # ['sq','t','s','m','z','l','o']
+    ['sq','t','s','m','z','l']
   end
 
   def self.create_from_flickr(obj, user)

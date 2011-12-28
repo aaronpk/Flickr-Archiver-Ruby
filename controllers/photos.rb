@@ -60,7 +60,7 @@ get '/:username/photo/:id/?*' do
     load_user params[:username]
     @photo = Photo.first :id => params[:id]
     raise FlickrArchivr::NotFoundError.new if @photo.nil?
-    @photo.is_authorized @user, @me
+    @photo.verify_permission! @user, @me
     @photo_tags = @photo.tags.all(:machine_tag => false)
     @machine_tags = @photo.tags.all(:machine_tag => true)
     @people = @photo.people
@@ -88,7 +88,19 @@ get '/:username/set/:id/?*' do
     load_user params[:username]
     @photoset = Photoset.first :id => params[:id], :user => @user
     @title = @photoset.title
-    @photos = @photoset.photos
+    @photos = @photoset.get_photos @me
+    erb :'photos/list'
+  rescue FlickrArchivr::Error => e
+    erb :"#{e.erb_template}"
+  end
+end
+
+get '/:username/place/:id/?*' do
+  begin
+    load_user params[:username]
+    @place = Place.first :id => params[:id], :user => @user
+    @title = @place.title
+    @photos = @place.get_photos @me
     erb :'photos/list'
   rescue FlickrArchivr::Error => e
     erb :"#{e.erb_template}"
@@ -99,8 +111,10 @@ get '/:username/tag/:id/?*' do
   begin
     load_user params[:username]
     @tag = Tag.first :id => params[:id], :user => @user
+    raise FlickrArchivr::NotFoundError.new if @tag.nil?
+    @tag.verify_permission! @user, @me
     @title = @tag.name
-    @photos = @tag.photos
+    @photos = @tag.get_photos @me
     erb :'photos/list'
   rescue FlickrArchivr::Error => e
     erb :"#{e.erb_template}"

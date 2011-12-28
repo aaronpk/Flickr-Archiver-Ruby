@@ -11,6 +11,7 @@ gem 'erubis'
 gem 'dm-core'
 gem 'dm-timestamps'
 gem 'dm-migrations'
+gem 'dm-aggregates'
 gem 'dm-mysql-adapter'
 
 gem 'rake',                '0.9.2',  :require => nil

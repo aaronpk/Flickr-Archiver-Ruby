@@ -6,8 +6,9 @@ class Person
 
   property :nsid, String, :length => 50, :index => true
   property :username, String, :length => 100
-
   property :realname, String, :length => 100
+
+  property :num, Integer, :default => 0
 
   # Returns the relative link to this item's page on this website
   def page(photo=nil)

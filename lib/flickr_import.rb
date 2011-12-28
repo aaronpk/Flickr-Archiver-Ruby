@@ -33,7 +33,7 @@ class FlickrImport
 
     # Begin downloading one page of photos starting at the last timestamp
 
-    photos = @flickr.people.getPhotos :user_id => "me", :per_page => 100, :max_upload_date => @user.import_timestamp, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
+    photos = @flickr.people.getPhotos :user_id => "me", :per_page => 103, :max_upload_date => @user.import_timestamp, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
     #photos = @flickr.people.getPhotos :min_upload_date => "2011-12-13", :user_id => "me", :per_page => 1, :max_upload_date => "2011-12-14", :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
     photos.each do |p|
       if Photo.first :flickr_id => p.id, :user => @user
@@ -82,6 +82,8 @@ class FlickrImport
             tag = Tag.create_from_flickr photoTag, @user
           end
           photo.tags << tag
+          tag.num = Photos.count(:tag => tag)
+          tag.save
         end
       end
 
@@ -94,6 +96,8 @@ class FlickrImport
             set = Photoset.create_from_flickr photoSet, @user
           end
           photo.photosets << set
+          set.num = Photos.count(:photoset => set)
+          set.save
         end
       end
 
@@ -114,7 +118,27 @@ class FlickrImport
         end
       end
 
+      # Places
+      photoPlaces = @flickr.photos.geo.getLocation :photo_id => p.id
+      if photoPlaces && photoPlaces.respond_to?('place')
+        photoPlaces.place.each do |photoPlace|
+          place = Place.first :flickr_id => photoPlace.id, :user => @user
+          if place.nil?
+            place = Place.create_from_flickr photoPlace, @user
+          end
+          photo.places << place
+          place.num = Photos.count(:place => place)
+          place.save
+        end
+      end
+
+      # Save the photo in the database
       photo.save
+
+      # Update the user record to reflect the timestamp of the last photo downloaded
+      @user.import_timestamp = photo.date_uploaded.to_time.to_i
+      @user.save
+
     end
   end
 
