@@ -1,0 +1,30 @@
+<div class="container">
+
+<div class="row">
+  <div class="span16">
+    <h2><%== @title %></h2>
+  </div>
+</div>
+
+<div class="row">
+
+  <div class="span12">
+
+    <ul class="media-grid photos">
+      <% @photos.each do |photo| %>
+        <li class="<%= photo.get_class %>">
+          <a href="<%= photo.page %>">
+            <img class="thumbnail" src="<%= photo.full_url('sq') %>" <%= photo.wh_attr('sq') %> />
+          </a>
+        </li>
+      <% end %>
+    </ul>
+    
+  </div><!-- left col -->
+  <div class="span4">
+
+  </div><!-- right col-->
+
+</div><!-- row -->
+
+</div><!-- container -->

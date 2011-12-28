@@ -60,9 +60,8 @@ get '/:username/photo/:id/?*' do
     @photo.is_authorized @user, @me
     @photo_tags = @photo.tags.all(:machine_tag => false)
     @machine_tags = @photo.tags.all(:machine_tag => true)
-    @people = @photo.people.all
-    @photosets = @photo.photosets.all
-    puts @photosets
+    @people = @photo.people
+    @photosets = @photo.photosets
     erb :'photos/view'
   rescue FlickrArchivr::Error => e
     erb :"#{e.erb_template}"
@@ -73,8 +72,36 @@ get '/:username/person/:id/?*' do
   begin
     load_user params[:username]
     @person = Person.first :id => params[:id], :user => @user
-    erb :'person/view'
+    @title = "Photos of #{@person.realname}"
+    @photos = @person.photos
+    erb :'photos/list'
   rescue FlickrArchivr::Error => e
     erb :"#{e.erb_template}"
   end
 end
+
+get '/:username/set/:id/?*' do
+  begin
+    load_user params[:username]
+    @photoset = Photoset.first :id => params[:id], :user => @user
+    @title = @photoset.title
+    @photos = @photoset.photos
+    erb :'photos/list'
+  rescue FlickrArchivr::Error => e
+    erb :"#{e.erb_template}"
+  end
+end
+
+get '/:username/tag/:id/?*' do
+  begin
+    load_user params[:username]
+    @tag = Tag.first :id => params[:id], :user => @user
+    @title = @tag.name
+    @photos = @tag.photos
+    erb :'photos/list'
+  rescue FlickrArchivr::Error => e
+    erb :"#{e.erb_template}"
+  end
+end
+
+
