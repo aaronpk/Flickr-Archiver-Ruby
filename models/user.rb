@@ -16,6 +16,6 @@ class User
   has n, :photos
   has n, :places
   has n, :tags
-  has n, :sets
+  has n, :photosets
   has n, :people
 end

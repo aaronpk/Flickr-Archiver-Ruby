@@ -52,13 +52,17 @@ get '/:username/recent' do
   end
 end
 
-# TODO: Filter public/private based on whether the user is logged in
 get '/:username/photo/:id/?*' do
   begin
     load_user params[:username]
     @photo = Photo.first :id => params[:id]
     raise FlickrArchivr::NotFoundError.new if @photo.nil?
     @photo.is_authorized @user, @me
+    @photo_tags = @photo.tags.all(:machine_tag => false)
+    @machine_tags = @photo.tags.all(:machine_tag => true)
+    @people = @photo.people.all
+    @photosets = @photo.photosets.all
+    puts @photosets
     erb :'photos/view'
   rescue FlickrArchivr::Error => e
     erb :"#{e.erb_template}"

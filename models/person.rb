@@ -11,6 +11,24 @@ class Person
 
   # Returns the relative link to this item's page on this website
   def page(photo=nil)
-    "/#{self.user.username}/person/#{self.id}/#{self.username}" + (photo.nil? ? "" : "?show=#{photo.id}")
+    "/#{self.user.username}/person/#{self.id}/#{self.title_urlsafe}" + (photo.nil? ? "" : "?show=#{photo.id}")
   end
+
+  def title_urlsafe
+    if self.username
+      self.username
+    else
+      self.realname.gsub(/[^A-Za-z0-9_-]/, '-')
+    end
+  end
+
+  def self.create_from_flickr(obj, user)
+    person = Person.new
+    person.user = user
+    person.nsid = obj.nsid
+    person.username = obj.username
+    person.realname = obj.realname
+    person
+  end
+
 end

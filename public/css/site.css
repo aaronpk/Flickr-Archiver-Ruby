@@ -6,12 +6,18 @@ body {
  * Sidebar
  */
 
+.sidebar-widget {
+  margin-top: 10px;
+  clear: both;
+}
+
 .sidebar-widget h3 {
   border-bottom: 1px #c8c8c8 solid;
 }
 
 .sidebar-widget ul {
   margin-top: 4px;
+  margin-bottom: 4px;
 }
 
 .sidebar-widget ul.tags {

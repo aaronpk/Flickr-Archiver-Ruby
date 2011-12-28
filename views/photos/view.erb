@@ -10,26 +10,60 @@
 
   <div class="span11">
 
-    <img src="<%= @photo.full_url('z') %>" <%= @photo.wh_attr('z') %>  />
+    <p><img src="<%= @photo.full_url('z') %>" <%= @photo.wh_attr('z') %>  /></p>
+    <p><%== @photo.description %></p>
 
   </div><!-- left col -->
   <div class="span5">
 
     <div class="sidebar-widget">
-      <h3>People</h3>
-      <ul>
-        <li><a href="/person/1/Aaron-Parecki">Aaron Parecki</li>
-      </ul>
+      <p>Taken on <%= @photo.date_taken.strftime "%B %e, %Y" %>
     </div>
 
+    <% if @people.count > 0 %>
+    <div class="sidebar-widget">
+      <h3>People</h3>
+      <ul>
+        <% @people.each do |person| %>
+          <li><a href="<%= person.page @photo %>"><%= person.realname %></a></li>
+        <% end %>
+      </ul>
+    </div>
+    <% end %>
+
+    <% if @photosets.count > 0 %>
+    <div class="sidebar-widget">
+      <h3>Sets</h3>
+      <ul>
+        <% @photosets.each do |photoset| %>
+          <li><a href="<%= photoset.page @photo %>"><%= photoset.title %></a></li>
+        <% end %>
+      </ul>
+    </div>
+    <% end %>
+
+    <% if @photo_tags.count > 0 %>
     <div class="sidebar-widget">
       <h3>Tags</h3>
       <ul class="tags">
-        <% @photo.tags.each do |tag| %>
+        <% @photo_tags.each do |tag| %>
+          <li><a href="<%= tag.page @photo %>"><%= tag.name %></a></li>
+        <% end %>
+      </ul>
+      <div style="clear: both;"></div>
+    </div>
+    <% end %>
+
+    <% if @machine_tags.count > 0 %>
+    <div class="sidebar-widget">
+      <h3>Machine Tags</h3>
+      <ul>
+        <% @machine_tags.each do |tag| %>
           <li><a href="<%= tag.page @photo %>"><%= tag.name %></a></li>
         <% end %>
       </ul>
     </div>
+    <% end %>
 
   </div><!-- right col-->
 

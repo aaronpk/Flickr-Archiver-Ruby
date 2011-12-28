@@ -4,7 +4,7 @@ class Photo
 
   belongs_to :user
   has n, :tags, :through => Resource
-  has n, :sets, :through => Resource
+  has n, :photosets, :through => Resource
   has n, :places, :through => Resource
   has n, :people, :through => :person_photo
 
