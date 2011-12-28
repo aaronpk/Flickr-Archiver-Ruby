@@ -3,6 +3,7 @@ class Photo
   property :id, Serial
 
   belongs_to :user
+  belongs_to :owner, 'Person'
   has n, :tags, :through => Resource
   has n, :photosets, :through => Resource
   has n, :places, :through => Resource
@@ -55,7 +56,6 @@ class Photo
   property :width_o, Integer
   property :height_o, Integer
 
-  property :owner, String, :length => 20
   property :secret, String, :length => 20
   property :raw, Text
 
@@ -146,7 +146,6 @@ class Photo
     photo.public = obj.visibility.ispublic
     photo.friends = obj.visibility.isfriend
     photo.family = obj.visibility.isfamily
-    photo.owner = obj.owner.nsid
     photo.secret = obj.secret
     photo.raw = obj.to_hash.to_json
     photo

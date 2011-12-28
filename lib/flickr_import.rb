@@ -47,11 +47,18 @@ class FlickrImport
       photo.url = FlickRaw.url_photopage(flickrPhoto)
       Photo.sizes.each do |s|
         if p.respond_to?('url_'+s)
-          photo.send('url_'+s+'=', p.send('url_'+s))
+          flickrURL = p.send('url_'+s)
+          photo.send('url_'+s+'=', flickrURL)
           photo.send('width_'+s+'=', p.send('width_'+s))
           photo.send('height_'+s+'=', p.send('height_'+s))
         end
       end
+
+      owner = Person.first :nsid => flickrPhoto.owner.nsid, :user => @user
+      if owner.nil?
+        owner = Person.create_from_flickr flickrPhoto.owner, @user
+      end
+      photo.owner = owner
 
       # Tags
       if flickrPhoto.tags
@@ -69,7 +76,7 @@ class FlickrImport
       photoContexts = @flickr.photos.getAllContexts :photo_id => p.id
       if photoContexts && photoContexts.respond_to?('set')
         photoContexts.set.each do |photoSet|
-          set = Photoset.first :flickr_id => photoSet.id
+          set = Photoset.first :flickr_id => photoSet.id, :user => @user
           if set.nil?
             set = Photoset.create_from_flickr photoSet, @user
           end
@@ -81,7 +88,7 @@ class FlickrImport
       if flickrPhoto.respond_to?('people') && flickrPhoto.people.respond_to?('haspeople') && flickrPhoto.people.haspeople
         photoPeople = @flickr.photos.people.getList :photo_id => p.id
         photoPeople.person.each do |photoPerson|
-          person = Person.first :nsid => photoPerson.nsid
+          person = Person.first :nsid => photoPerson.nsid, :user => @user
           puts photoPerson.to_hash
           if person.nil?
             person = Person.create_from_flickr photoPerson, @user
