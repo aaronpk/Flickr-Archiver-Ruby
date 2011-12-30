@@ -17,6 +17,8 @@ class Photo
   property :date_uploaded, DateTime
   property :last_update, DateTime
 
+  property :media, String, :length => 50, :default => "photo", :index => true
+
   property :latitude, Float
   property :longitude, Float
   property :accuracy, Float
@@ -77,7 +79,7 @@ class Photo
   # Returns just the filename portion for the photo. This will be 
   # appended to URL and filesystem paths.
   def filename(size)
-    self.flickr_id + '-' + self.filename_from_title + '.jpg'
+    self.flickr_id + '-' + self.filename_from_title + (size == 'v' ? '.mp4' : '.jpg')
   end
 
   # Returns the absolute path to the folder containing the jpg
@@ -131,8 +133,8 @@ class Photo
   end
 
   def self.sizes
-    # ['sq','t','s','m','z','l','o']
-    ['sq','t','s','m','z','l']
+    ['sq','t','s','m','z','l','o']
+    #['sq','t','s','m','z','l']
   end
 
   def self.create_from_flickr(obj, user)

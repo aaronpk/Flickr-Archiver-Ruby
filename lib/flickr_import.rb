@@ -33,6 +33,7 @@ class FlickrImport
 
     # Begin downloading one page of photos starting at the last timestamp
     photos = @flickr.people.getPhotos :user_id => "me", :per_page => 100, :max_upload_date => @user.import_timestamp, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
+    #photos = @flickr.people.getPhotos :user_id => "me", :per_page => 1, :max_upload_date => 1324398709, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
     #photos = @flickr.people.getPhotos :min_upload_date => "2011-12-13", :user_id => "me", :per_page => 1, :max_upload_date => "2011-12-14", :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
     photos.each do |p|
       if Photo.first :flickr_id => p.id, :user => @user
@@ -60,11 +61,39 @@ class FlickrImport
 
           # Download file from Flickr
           puts "Downloading #{flickrURL} to #{local_abs_filename}"
-#          `curl -o #{local_abs_filename} #{flickrURL}`
+          `curl -o #{local_abs_filename} #{flickrURL}`
           puts "...done"
 
           photo.local_path = photo.path("%") + photo.filename("%")
         end
+      end
+
+      # If it's a video, download the file
+      if flickrPhoto.media == "video"
+        FileUtils.mkdir_p(photo.abs_path('v'))
+        local_abs_filename = photo.abs_filename('v')
+
+        # The secret seems to be different for the original version of the video. Not sure how to find it
+        # videoURL = "http://www.flickr.com/photos/#{@user.nsid}/#{photo.flickr_id}/play/orig/#{photo.secret}/"
+
+        # Instead, iterate through all the available sizes and look for the largest available
+        flickrSizes = @flickr.photos.getSizes :photo_id => p.id
+        largestSize = 0
+        videoURL = ''
+        flickrSizes.size.each do |sz|
+          if sz.media == "video"
+            if sz.width.to_i > largestSize
+              largestSize = sz.width.to_i
+              videoURL = sz.source
+            end
+          end
+        end
+
+        puts "Downloading #{videoURL} to #{local_abs_filename}"
+        `curl -L -o #{local_abs_filename} #{videoURL}`
+        puts "...done"
+
+        photo.media = "video"
       end
 
       owner = Person.first :nsid => flickrPhoto.owner.nsid, :user => @user
