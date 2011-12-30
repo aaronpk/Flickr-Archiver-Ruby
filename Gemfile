@@ -13,6 +13,7 @@ gem 'dm-timestamps'
 gem 'dm-migrations'
 gem 'dm-aggregates'
 gem 'dm-mysql-adapter'
+gem 'dm-pager'
 
 gem 'rake'
 gem 'hashie'

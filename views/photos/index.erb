@@ -15,6 +15,10 @@
     <% end %>
   </ul>
 
+  <div class="pagination">
+    <%= @photos.pager.to_html("/#{params[:username]}", :size => 15) %>
+  </div>
+
 </div><!-- span16 -->
 </div><!-- row -->
 

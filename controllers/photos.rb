@@ -17,9 +17,9 @@ get '/:username/?' do
   begin
     load_user params[:username]
     if @me && @me.id == @user.id 
-      @photos = @user.photos
+      @photos = @user.photos.all(:order => [:date_uploaded.desc]).page(params[:page] || 1, :per_page => 9*4)
     else
-      @photos = @user.photos.all(:public => true)
+      @photos = @user.photos.all(:public => true, :order => [:date_uploaded.desc]).page(params[:page] || 1, :per_page => 9*4)
     end
     erb :'photos/index'
   rescue FlickrArchivr::Error => e

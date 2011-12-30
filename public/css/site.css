@@ -71,3 +71,14 @@ body {
 }
 
 
+/**
+ * Pagination
+ */
+.pagination .next a {
+  border-right: 1px solid rgba(0, 0, 0, 0.15);
+}
+.pagination .last a {
+  border: 0;
+}
+
+
