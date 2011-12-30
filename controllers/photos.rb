@@ -3,6 +3,14 @@ def load_user(username)
   raise FlickrArchivr::NotFoundError.new if @user.nil?
 end
 
+def per_page
+  9 * 4
+end
+
+def per_page_small
+  6 * 4
+end
+
 get '/:username/test/:id' do
   begin
     load_user params[:username]
@@ -17,9 +25,9 @@ get '/:username/?' do
   begin
     load_user params[:username]
     if @me && @me.id == @user.id 
-      @photos = @user.photos.all(:order => [:date_uploaded.desc]).page(params[:page] || 1, :per_page => 9*4)
+      @photos = @user.photos.all(:order => [:date_uploaded.desc]).page(params[:page] || 1, :per_page => per_page)
     else
-      @photos = @user.photos.all(:public => true, :order => [:date_uploaded.desc]).page(params[:page] || 1, :per_page => 9*4)
+      @photos = @user.photos.all(:public => true, :order => [:date_uploaded.desc]).page(params[:page] || 1, :per_page => per_page)
     end
     erb :'photos/index'
   rescue FlickrArchivr::Error => e
@@ -79,7 +87,7 @@ get '/:username/person/:id/?*' do
     @person = Person.first :id => params[:id], :user => @user
     raise FlickrArchivr::NotFoundError.new if @person.nil?
     @title = "Photos of #{@person.realname}"
-    @photos = @person.photos
+    @photos = @person.get_photos @me, params[:page], per_page_small
     erb :'photos/list'
   rescue FlickrArchivr::Error => e
     erb :"#{e.erb_template}"
@@ -92,7 +100,7 @@ get '/:username/set/:id/?*' do
     @photoset = Photoset.first :id => params[:id], :user => @user
     raise FlickrArchivr::NotFoundError.new if @photoset.nil?
     @title = @photoset.title
-    @photos = @photoset.get_photos @me
+    @photos = @photoset.get_photos @me, params[:page], per_page_small
     erb :'photos/list'
   rescue FlickrArchivr::Error => e
     erb :"#{e.erb_template}"
@@ -105,7 +113,7 @@ get '/:username/place/:id/?*' do
     @place = Place.first :id => params[:id], :user => @user
     raise FlickrArchivr::NotFoundError.new if @place.nil?
     @title = @place.name
-    @photos = @place.get_photos @me
+    @photos = @place.get_photos @me, params[:page], per_page_small
     erb :'photos/list'
   rescue FlickrArchivr::Error => e
     erb :"#{e.erb_template}"
@@ -119,7 +127,7 @@ get '/:username/tag/:id/?*' do
     raise FlickrArchivr::NotFoundError.new if @tag.nil?
     @tag.verify_permission! @user, @me
     @title = @tag.name
-    @photos = @tag.get_photos @me
+    @photos = @tag.get_photos @me, params[:page], per_page_small
     erb :'photos/list'
   rescue FlickrArchivr::Error => e
     erb :"#{e.erb_template}"

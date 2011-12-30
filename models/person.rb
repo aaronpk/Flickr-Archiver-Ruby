@@ -10,6 +10,14 @@ class Person
 
   property :num, Integer, :default => 0
 
+  def get_photos(auth_user, page, per_page)
+    if auth_user && auth_user.id == self.user_id
+      self.photos.all(:order => [:date_uploaded.desc]).page(page || 1, :per_page => per_page)
+    else
+      self.photos.all(:public => true, :order => [:date_uploaded.desc]).page(page || 1, :per_page => per_page)
+    end
+  end
+
   # Returns the relative link to this item's page on this website
   def page(photo=nil)
     "/#{self.user.username}/person/#{self.id}/#{self.title_urlsafe}" + (photo.nil? ? "" : "?show=#{photo.id}")

@@ -19,9 +19,17 @@
         </li>
       <% end %>
     </ul>
+
+    <div class="pagination">
+      <%= @photos.pager.to_html("/#{params[:username]}", :size => 9) %>
+    </div>
     
   </div><!-- left col -->
   <div class="span4">
+    
+    <div class="sidebar-widget">
+      <p><a href="">Hello</a></p>
+    </div>    
 
   </div><!-- right col-->
 
