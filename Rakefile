@@ -16,4 +16,9 @@ namespace :flickr do
     init
     FlickrImport.do_import username
   end
+
+  task :test, :username do |t, username|
+    init
+    FlickrImport.test username
+  end
 end
