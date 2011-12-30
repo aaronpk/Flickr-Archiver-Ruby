@@ -21,7 +21,7 @@
     </ul>
 
     <div class="pagination">
-      <%= @photos.pager.to_html("/#{params[:username]}", :size => 9) %>
+      <%= @photos.pager.to_html("/#{params[:username]}", :size => 9, :more_text => '<span>...</span>') %>
     </div>
     
   </div><!-- left col -->
