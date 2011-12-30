@@ -48,3 +48,26 @@ body {
 .photos .public a {
   
 }
+
+/**
+ * Photo Map
+ */
+.photo_map {
+  position: relative;
+  height: 180px;
+  width: 280px;
+  display: block;
+  border: 1px #C8C8C8 solid;
+}
+.photo_map .map {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.photo_map #photo_map_far {
+}
+.photo_map #photo_map_near {
+  display: none;
+}
+
+

@@ -21,6 +21,24 @@
       <p>Taken on <%= @photo.date_taken.strftime "%B %e, %Y" %>
     </div>
 
+    <% if @has_location %>
+    <div class="sidebar-widget">
+      <% if @photo.latitude %>
+        <a href="http://open.mapquest.com/?q=<%=@photo.latitude%>,<%=@photo.longitude%>" class="photo_map">
+          <span class="map" id="photo_map_far">
+            <img src="http://open.mapquestapi.com/staticmap/v3/getmap?center=<%=@photo.latitude%>,<%=@photo.longitude%>&amp;zoom=3&amp;size=280,180&amp;type=map&amp;imagetype=png&amp;pois=1,<%=@photo.latitude%>,<%=@photo.longitude%>,0,0" width="280" height="180" alt="<%= "#{@photo.latitude}, #{@photo.longitude}" %>" />
+          </span>
+          <span class="map" id="photo_map_near">
+            <img src="http://open.mapquestapi.com/staticmap/v3/getmap?center=<%=@photo.latitude%>,<%=@photo.longitude%>&amp;zoom=<%= [15,@photo.accuracy].min %>&amp;size=280,180&amp;type=map&amp;imagetype=png&amp;pois=1,<%=@photo.latitude%>,<%=@photo.longitude%>,0,0" width="280" height="180" alt="<%= "#{@photo.latitude}, #{@photo.longitude}" %>" />
+          </span>
+        </a>
+      <% end %>
+      <% @places.each_index do |i| %>
+        <a href="<%= @places[i].page @photo %>"><%= @places[i].name %></a><%= (i == @places.length - 1 ? '' : ', ') %>
+      <% end %>
+    </div>
+    <% end %>
+
     <% if @people.count > 0 %>
     <div class="sidebar-widget">
       <h3>People</h3>

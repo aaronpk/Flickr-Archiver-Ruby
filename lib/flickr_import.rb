@@ -32,8 +32,7 @@ class FlickrImport
     end
 
     # Begin downloading one page of photos starting at the last timestamp
-
-    photos = @flickr.people.getPhotos :user_id => "me", :per_page => 103, :max_upload_date => @user.import_timestamp, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
+    photos = @flickr.people.getPhotos :user_id => "me", :per_page => 100, :max_upload_date => @user.import_timestamp, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
     #photos = @flickr.people.getPhotos :min_upload_date => "2011-12-13", :user_id => "me", :per_page => 1, :max_upload_date => "2011-12-14", :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
     photos.each do |p|
       if Photo.first :flickr_id => p.id, :user => @user
@@ -43,6 +42,7 @@ class FlickrImport
 
       flickrPhoto = @flickr.photos.getInfo :photo_id => p.id, :secret => p.secret
       puts flickrPhoto.to_hash.to_json
+
       photo = Photo.create_from_flickr flickrPhoto, @user
       photo.url = FlickRaw.url_photopage(flickrPhoto)
       Photo.sizes.each do |s|
@@ -60,7 +60,7 @@ class FlickrImport
 
           # Download file from Flickr
           puts "Downloading #{flickrURL} to #{local_abs_filename}"
-          `curl -o #{local_abs_filename} #{flickrURL}`
+#          `curl -o #{local_abs_filename} #{flickrURL}`
           puts "...done"
 
           photo.local_path = photo.path("%") + photo.filename("%")
@@ -82,7 +82,7 @@ class FlickrImport
             tag = Tag.create_from_flickr photoTag, @user
           end
           photo.tags << tag
-          tag.num = Photos.count(:tag => tag)
+          tag.num = PhotoTag.count(:tag => tag) + 1
           tag.save
         end
       end
@@ -96,7 +96,7 @@ class FlickrImport
             set = Photoset.create_from_flickr photoSet, @user
           end
           photo.photosets << set
-          set.num = Photos.count(:photoset => set)
+          set.num = PhotoPhotoset.count(:photoset => set) + 1
           set.save
         end
       end
@@ -119,17 +119,31 @@ class FlickrImport
       end
 
       # Places
-      photoPlaces = @flickr.photos.geo.getLocation :photo_id => p.id
-      if photoPlaces && photoPlaces.respond_to?('place')
-        photoPlaces.place.each do |photoPlace|
-          place = Place.first :flickr_id => photoPlace.id, :user => @user
-          if place.nil?
-            place = Place.create_from_flickr photoPlace, @user
+      begin
+        photoPlaces = @flickr.photos.geo.getLocation :photo_id => p.id
+        if photoPlaces && photoPlaces.respond_to?('location')
+          location = photoPlaces.location
+          if location.respond_to?('latitude')
+            photo.latitude = location.latitude
+            photo.longitude = location.longitude
+            photo.accuracy = location.accuracy
           end
-          photo.places << place
-          place.num = Photos.count(:place => place)
-          place.save
+
+          ['neighbourhood','locality','county','region','country'].each do |type|
+            if location.respond_to? type
+              puts location.send(type)._content
+              place = Place.first :type => type, :flickr_id => location.send(type).place_id, :user => @user
+              if place.nil?
+                place = Place.create_from_flickr type, location.send(type), @user
+              end
+              photo.places << place
+              place.num = PhotoPlace.count(:place => place) + 1
+              place.save
+            end
+          end
         end
+      rescue FlickRaw::FailedResponse
+        # 'flickr.photos.geo.getLocation' - Photo has no location information
       end
 
       # Save the photo in the database
