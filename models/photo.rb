@@ -69,6 +69,7 @@ class Photo
   property :local_path_v, String, :length => 512
 
   property :secret, String, :length => 20
+  property :original_secret, String, :length => 20
   property :raw, Text
 
   def get_class
@@ -90,13 +91,16 @@ class Photo
   # appended to URL and filesystem paths.
   def filename(size)
     if size == 'v'
+      secret = self.original_secret
       ext = 'mp4'
     elsif size == 'o'
+      secret = self.original_secret
       ext = self.format
     else
+      secret = self.secret
       ext = 'jpg';
     end
-    self.flickr_id + '-' + self.filename_from_title + ".#{ext}"
+    self.flickr_id + '_' + secret + '_' + self.filename_from_title + ".#{ext}"
   end
 
   # Returns the absolute path to the folder containing the jpg
@@ -117,7 +121,7 @@ class Photo
   # Generate a URL-and-filesystem-safe filename given the photo title.
   # Remove trailing file extension, and remove all non-basic characters.
   def filename_from_title
-    self.title.sub(/\.(jpg|png|gif)$/i, '').gsub(/[^A-Za-z0-9_-]/, '-').sub(/-$/, '').gsub(/-+/, '-')[0,350]
+    self.title.sub(/\.(jpg|png|gif)$/i, '').gsub(/[^A-Za-z0-9_-]/, '-').gsub(/-+/, '-').sub(/-$/, '')[0,350]
   end
 
   # Returns the relative link to this photo's page on this website
@@ -194,6 +198,7 @@ class Photo
     photo.friends = obj.visibility.isfriend
     photo.family = obj.visibility.isfamily
     photo.secret = obj.secret
+    photo.original_secret = obj.originalsecret
     photo.raw = obj.to_hash.to_json
     photo
   end
