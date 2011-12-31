@@ -1,4 +1,5 @@
-def init(env=ENV['RACK_ENV']); require File.join('.', 'environment.rb') end
+def init(env=ENV['RACK_ENV']); end
+require File.join('.', 'environment.rb')
 
 namespace :db do
   task :bootstrap do
@@ -15,6 +16,10 @@ namespace :flickr do
   task :import, :username do |t, username|
     init
     FlickrImport.do_import username
+  end
+
+  task :update, :username do |t, username|
+    FlickrImport.do_update username
   end
 
   task :test, :username do |t, username|

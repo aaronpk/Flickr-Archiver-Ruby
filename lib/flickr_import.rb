@@ -23,7 +23,15 @@ class FlickrImport
   end
 
   def self.do_import(args)
-    puts "Starting import for user: #{args.username}"
+    self.process 'import', args
+  end
+
+  def self.do_update(args)
+    self.process 'update', args
+  end
+
+  def self.process(mode, args)
+    puts "Starting #{mode} for user: #{args.username}"
     @user = User.first :username => args.username
 
     if @user.nil?
@@ -48,7 +56,7 @@ class FlickrImport
       exit!
     end
 
-    if @user.import_timestamp == 0
+    if mode == 'import' && @user.import_timestamp == 0
       @user.import_timestamp = Time.now.to_i
       @user.save
     end
@@ -56,15 +64,23 @@ class FlickrImport
     while true
       photos_added = 0
 
-      # Begin downloading one page of photos starting at the last timestamp
-      photos = @flickr.people.getPhotos :user_id => "me", :per_page => 100, :max_upload_date => @user.import_timestamp, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
-      #photos = @flickr.people.getPhotos :user_id => "me", :per_page => 1, :max_upload_date => 1324398709, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
-      #photos = @flickr.people.getPhotos :min_upload_date => "2011-12-13", :user_id => "me", :per_page => 1, :max_upload_date => "2011-12-14", :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
+      if mode == 'import'
+        # Begin downloading one page of photos starting at the last timestamp
+        photos = @flickr.people.getPhotos :user_id => "me", :per_page => 100, :max_upload_date => @user.import_timestamp, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
+        #photos = @flickr.people.getPhotos :user_id => "me", :per_page => 1, :max_upload_date => 1324398709, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
+        #photos = @flickr.people.getPhotos :min_upload_date => "2011-12-13", :user_id => "me", :per_page => 1, :max_upload_date => "2011-12-14", :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
+      else
+        # Flickr limits the recentlyUpdated feed to at most 500 at a time
+        photos = @flickr.photos.recentlyUpdated :min_date => @user.import_timestamp, :per_page => 3, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
+        # For 'update' mode, we want to iterate through photos oldest to newest, but flickr returns them in descending order
+        photos = photos.to_a.reverse
+      end
 
       photos.each do |p|
-        if Photo.first :flickr_id => p.id, :user => @user
+        if photo = Photo.first(:flickr_id => p.id, :user => @user)
           puts "Photo #{p.id} already exists"
-          next
+          next if mode == 'import'
+          next if @user.last_photo_imported == p.id
         end
 
         photos_added += 1
@@ -72,7 +88,10 @@ class FlickrImport
         flickrPhoto = @flickr.photos.getInfo :photo_id => p.id, :secret => p.secret
         puts flickrPhoto.to_hash.to_json
 
-        photo = Photo.create_from_flickr flickrPhoto, @user
+        if photo.nil?   # If an existing photo record was not found, prepare a new one
+          photo = Photo.create_from_flickr flickrPhoto, @user
+        end
+
         photo.url = FlickRaw.url_photopage(flickrPhoto)
         Photo.sizes.each do |s|
           if p.respond_to?('url_'+s)
@@ -86,6 +105,8 @@ class FlickrImport
             # Make the parent folder
             FileUtils.mkdir_p(photo.abs_path(s))
             local_abs_filename = photo.abs_filename(s)
+
+            photo.send('local_path_'+s+'=', photo.filename(s))
 
             # Download file from Flickr
             puts "Downloading #{flickrURL} to #{local_abs_filename}"
@@ -121,6 +142,7 @@ class FlickrImport
           `curl -L -o #{local_abs_filename} #{videoURL}`
           puts "...done"
 
+          photo.local_path_v = photo.filename('v')
           photo.media = "video"
         end
 
@@ -168,9 +190,9 @@ class FlickrImport
               person = Person.create_from_flickr photoPerson, @user
             end
             if photoPerson.respond_to?('w')
-              PersonPhoto.create :person => person, :photo => photo, :w => photoPerson.w, :h => photoPerson.h, :x => photoPerson.x, :y => photoPerson.y
+              PersonPhoto.first_or_create({:person => person, :photo => photo}, {:w => photoPerson.w, :h => photoPerson.h, :x => photoPerson.x, :y => photoPerson.y})
             else
-              PersonPhoto.create :person => person, :photo => photo
+              PersonPhoto.first_or_create :person => person, :photo => photo
             end
           end
         end
@@ -206,8 +228,11 @@ class FlickrImport
         # Save the photo in the database
         photo.save
 
-        # Update the user record to reflect the timestamp of the last photo downloaded
+        # Update the user record to reflect the timestamp of the last photo downloaded.
+        # In 'import' mode, this relies on the photos being returned in descending order.
+        # In 'update' mode, this relies on the photos being looped through in ascending order.
         @user.import_timestamp = photo.date_uploaded.to_time.to_i
+        @user.last_photo_imported = p.id
         @user.save
 
       end   # for each photos

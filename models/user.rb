@@ -6,6 +6,7 @@ class User
   property :username, String, :length => 100
 
   property :import_timestamp, Integer, :default => 0
+  property :last_photo_imported, String, :length => 50
 
   property :access_token, String, :length => 255
   property :access_secret, String, :length => 255
