@@ -152,7 +152,7 @@ class Photo
         actual_size = s
       end
     end
-    "<img src=\"#{img}\" #{self.wh_attr(actual_size)} />"
+    "<img src=\"#{SiteConfig.photo_url_root}#{img}\" #{self.wh_attr(actual_size)} />"
   end
 
   # Raise an exception if the given user is not authorized to view this photo.

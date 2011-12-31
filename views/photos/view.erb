@@ -10,7 +10,7 @@
 
   <div class="span11">
 
-    <p><img src="<%= @photo.full_url('z') %>" <%= @photo.wh_attr('z') %>  /></p>
+    <p><%= @photo.img_tag 'z' %></p>
     <p><%= format_text @photo.description %></p>
 
   </div><!-- left col -->
