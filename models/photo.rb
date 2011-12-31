@@ -10,14 +10,16 @@ class Photo
   has n, :people, :through => :person_photo
 
   property :flickr_id, String, :length => 50, :index => true
+  property :username, String, :length => 100    # Username of the photo's owner. Used to avoid a DB lookup when creating links to the photo
 
-  property :title, String, :length => 255
+  property :title, String, :length => 512
   property :description, Text
   property :date_taken, DateTime
   property :date_uploaded, DateTime
   property :last_update, DateTime
 
   property :media, String, :length => 50, :default => "photo", :index => true
+  property :format, String, :length => 10, :default => "jpg"
 
   property :latitude, Float
   property :longitude, Float
@@ -28,35 +30,44 @@ class Photo
   property :family, Boolean
 
   property :url, String, :length => 255
-  property :local_path, String, :length => 255
+  property :local_path, String, :length => 512
 
   property :url_sq, String, :length => 255
+  property :local_path_sq, String, :length => 512
   property :width_sq, Integer
   property :height_sq, Integer
 
   property :url_t, String, :length => 255
+  property :local_path_t, String, :length => 512
   property :width_t, Integer
   property :height_t, Integer
 
   property :url_s, String, :length => 255
+  property :local_path_s, String, :length => 512
   property :width_s, Integer
   property :height_s, Integer
 
   property :url_m, String, :length => 255
+  property :local_path_m, String, :length => 512
   property :width_m, Integer
   property :height_m, Integer
 
   property :url_z, String, :length => 255
+  property :local_path_z, String, :length => 512
   property :width_z, Integer
   property :height_z, Integer
 
   property :url_l, String, :length => 255
+  property :local_path_l, String, :length => 512
   property :width_l, Integer
   property :height_l, Integer
 
   property :url_o, String, :length => 255
+  property :local_path_o, String, :length => 512
   property :width_o, Integer
   property :height_o, Integer
+
+  property :local_path_v, String, :length => 512
 
   property :secret, String, :length => 20
   property :raw, Text
@@ -73,13 +84,20 @@ class Photo
   # Returns the relative path for the photo at the requested size.
   # This path is safe for URLs as well as filesystem access
   def path(size)
-    self.user.username + '/' + self.date_taken.strftime('%Y/%m/%d/') + size + '/'
+    self.username + '/' + self.date_taken.strftime('%Y/%m/%d/') + size + '/'
   end
 
   # Returns just the filename portion for the photo. This will be 
   # appended to URL and filesystem paths.
   def filename(size)
-    self.flickr_id + '-' + self.filename_from_title + (size == 'v' ? '.mp4' : '.jpg')
+    if size == 'v'
+      ext = 'mp4'
+    elsif size == 'o'
+      ext = self.format
+    else
+      ext = 'jpg';
+    end
+    self.flickr_id + '-' + self.filename_from_title + ".#{ext}"
   end
 
   # Returns the absolute path to the folder containing the jpg
@@ -117,6 +135,26 @@ class Photo
     end
   end
 
+  # Return a complete image tag for the best version of the photo that fits within the requested size
+  def img_tag(size)
+    # Iterate through self.sizes backwards starting from #{size}
+    # Find the first local path
+    found_first_size = false
+    img = ''
+    actual_size = size
+    Photo.sizes.reverse.each do |s|
+      next if found_first_size == false && s != size
+      next if img != ''
+      found_first_size = true
+      path = self.send('local_path_'+s)
+      if !path.nil?
+        img = path
+        actual_size = s
+      end
+    end
+    "<img src=\"#{img}\" #{self.wh_attr(actual_size)} />"
+  end
+
   # Raise an exception if the given user is not authorized to view this photo.
   # Check both logged-out visitors, as well as cross-user permissions.
   # user is the requested user, auth_user is the logged-in user
@@ -140,9 +178,11 @@ class Photo
   def self.create_from_flickr(obj, user)
     photo = Photo.new
     photo.user = user
+    photo.username = user.username
     photo.flickr_id = obj.id
     photo.title = obj.title
     photo.description = obj.description
+    photo.format = obj.originalformat
     photo.date_taken = Time.parse obj.dates.taken
     photo.date_uploaded = Time.at obj.dates.posted.to_i
     photo.last_update = Time.at obj.dates.lastupdate.to_i if obj.dates.lastupdate
