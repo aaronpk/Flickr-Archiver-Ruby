@@ -100,7 +100,7 @@ class Photo
   # Generate a URL-and-filesystem-safe filename given the photo title.
   # Remove trailing file extension, and remove all non-basic characters.
   def filename_from_title
-    self.title.sub(/\.(jpg|png|gif)$/i, '').gsub(/[^A-Za-z0-9_-]/, '-').sub(/-$/, '').gsub(/-+/, '-')
+    self.title.sub(/\.(jpg|png|gif)$/i, '').gsub(/[^A-Za-z0-9_-]/, '-').sub(/-$/, '').gsub(/-+/, '-')[0,350]
   end
 
   # Returns the relative link to this photo's page on this website
