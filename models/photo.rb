@@ -30,7 +30,6 @@ class Photo
   property :family, Boolean
 
   property :url, String, :length => 255
-  property :local_path, String, :length => 512
 
   property :url_sq, String, :length => 255
   property :local_path_sq, String, :length => 512

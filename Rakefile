@@ -22,6 +22,10 @@ namespace :flickr do
     FlickrImport.do_update username
   end
 
+  task :add_local_path do
+    FlickrImportMigrate.add_local_path
+  end
+
   task :test, :username do |t, username|
     init
     FlickrImport.test username

@@ -112,8 +112,6 @@ class FlickrImport
             puts "Downloading #{flickrURL} to #{local_abs_filename}"
             `curl -o #{local_abs_filename} #{flickrURL}`
             puts "...done"
-
-            photo.local_path = photo.path("%") + photo.filename("%")
           end
         end
 
