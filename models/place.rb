@@ -13,6 +13,10 @@ class Place
 
   include FlickrArchivr::PhotoList
 
+  def list_type
+    'place'
+  end
+
   # Returns the relative link to this item's page on this website
   def page(photo=nil)
     "/#{self.username_from_id(self.user_id)}/place/#{self.id}/#{self.title_urlsafe}" + (photo.nil? ? "" : "?show=#{photo.id}")

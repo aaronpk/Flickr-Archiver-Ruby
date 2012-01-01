@@ -113,7 +113,7 @@ class Photo
     self.abs_path(size) + self.filename(size)
   end
 
-  # Returns the full URL to the folder containing the jpg
+  # Returns the full URL to the jpg
   def full_url(size)
     SiteConfig.photo_url_root + self.path(size) + self.filename(size)
   end
@@ -125,8 +125,8 @@ class Photo
   end
 
   # Returns the relative link to this photo's page on this website
-  def page
-    "/#{self.username}/photo/#{self.id}/#{self.filename_from_title}"
+  def page(list=nil)
+    "/#{self.username}/photo/#{self.id}/#{self.filename_from_title}" + (list ? "?#{list.list_type}=#{list.id}" : "")
   end
 
   # Return attributes for width and height for inserting into an <img> tag
