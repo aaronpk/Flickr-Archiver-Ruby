@@ -202,4 +202,25 @@ class Photo
     photo.raw = obj.to_hash.to_json
     photo
   end
+
+  def update_from_flickr(obj)
+    self.title = obj.title
+    self.description = obj.description
+    self.format = obj.originalformat
+    self.date_taken = Time.parse obj.dates.taken
+    self.date_uploaded = Time.at obj.dates.posted.to_i
+    self.last_update = Time.at obj.dates.lastupdate.to_i if obj.dates.lastupdate
+    if obj.respond_to?('location')
+      self.latitude = obj.location.latitude
+      self.longitude = obj.location.longitude
+      self.accuracy = obj.location.accuracy
+    end
+    self.public = obj.visibility.ispublic
+    self.friends = obj.visibility.isfriend
+    self.family = obj.visibility.isfamily
+    self.secret = obj.secret
+    self.original_secret = obj.originalsecret
+    self.raw = obj.to_hash.to_json
+  end
+
 end

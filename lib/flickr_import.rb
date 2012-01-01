@@ -80,7 +80,7 @@ class FlickrImport
         if photo = Photo.first(:flickr_id => p.id, :user => @user)
           puts "Photo #{p.id} already exists"
           next if mode == 'import'
-          next if @user.last_photo_imported == p.id
+          next if @user.import_timestamp == p.lastupdate.to_i
         end
 
         photos_added += 1
@@ -90,6 +90,8 @@ class FlickrImport
 
         if photo.nil?   # If an existing photo record was not found, prepare a new one
           photo = Photo.create_from_flickr flickrPhoto, @user
+        else
+          photo.update_from_flickr flickrPhoto
         end
 
         photo.url = FlickRaw.url_photopage(flickrPhoto)
@@ -106,7 +108,16 @@ class FlickrImport
             FileUtils.mkdir_p(photo.abs_path(s))
             local_abs_filename = photo.abs_filename(s)
 
-            photo.send('local_path_'+s+'=', photo.filename(s))
+            local_path = photo.path(s)+photo.filename(s)
+
+            # If the photo was renamed, delete the old file first
+            if local_path != photo.send("local_path_#{s}")
+              old_abs_filename = photo.send("local_path_#{s}")
+              puts "! Deleting #{old_abs_filename}"
+              `rm #{local_abs_filename}`
+            end
+
+            photo.send("local_path_#{s}=", local_path)
 
             # Download file from Flickr
             puts "Downloading #{flickrURL} to #{local_abs_filename}"
@@ -229,7 +240,11 @@ class FlickrImport
         # Update the user record to reflect the timestamp of the last photo downloaded.
         # In 'import' mode, this relies on the photos being returned in descending order.
         # In 'update' mode, this relies on the photos being looped through in ascending order.
-        @user.import_timestamp = photo.date_uploaded.to_time.to_i
+        if mode == 'import'
+          @user.import_timestamp = photo.date_uploaded.to_time.to_i
+        else
+          @user.import_timestamp = p.lastupdate.to_i
+        end
         @user.last_photo_imported = p.id
         @user.save
 
