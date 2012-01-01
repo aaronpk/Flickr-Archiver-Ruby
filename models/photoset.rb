@@ -16,13 +16,7 @@ class Photoset
   property :created_date, DateTime  # from Flickr
   property :updated_date, DateTime  # from Flickr
 
-  def get_photos(auth_user, page, per_page)
-    if auth_user && auth_user.id == self.user_id
-      self.photos.all(:order => [:date_uploaded.desc]).page(page || 1, :per_page => per_page)
-    else
-      self.photos.all(:public => true, :order => [:date_uploaded.desc]).page(page || 1, :per_page => per_page)
-    end
-  end
+  include FlickrArchivr::Model
 
   # Returns the relative link to this item's page on this website
   def page(photo=nil)
@@ -33,17 +27,8 @@ class Photoset
     self.title.gsub(/[^A-Za-z0-9_-]/, '-')
   end
 
-  # Raise an exception if the given user is not authorized to view this photo.
-  # Check both logged-out visitors, as well as cross-user permissions
   def verify_permission!(user, auth_user)
     raise FlickrArchivr::NotFoundError if self.user_id != user.id
-    if auth_user
-      # Disallow if the photo is not public and the authenticated user does not own the photo
-      raise FlickrArchivr::ForbiddenError if !self.public && self.user_id != auth_user.id
-    else
-      # Disallow if the photo is not public
-      raise FlickrArchivr::ForbiddenError if !self.public
-    end
     true
   end
 

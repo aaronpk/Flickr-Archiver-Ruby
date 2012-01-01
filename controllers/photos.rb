@@ -86,6 +86,7 @@ get '/:username/person/:id/?*' do
     load_user params[:username]
     @person = Person.first :id => params[:id], :user => @user
     raise FlickrArchivr::NotFoundError.new if @person.nil?
+    @person.verify_permission! @user, @me
     @title = "Photos of #{@person.realname}"
     @photos = @person.get_photos @me, params[:page], per_page_small
     erb :'photos/list'
@@ -99,6 +100,7 @@ get '/:username/set/:id/?*' do
     load_user params[:username]
     @photoset = Photoset.first :id => params[:id], :user => @user
     raise FlickrArchivr::NotFoundError.new if @photoset.nil?
+    @photoset.verify_permission! @user, @me
     @title = @photoset.title
     @photos = @photoset.get_photos @me, params[:page], per_page_small
     erb :'photos/list'
@@ -112,6 +114,7 @@ get '/:username/place/:id/?*' do
     load_user params[:username]
     @place = Place.first :id => params[:id], :user => @user
     raise FlickrArchivr::NotFoundError.new if @place.nil?
+    @place.verify_permission! @user, @me
     @title = @place.name
     @photos = @place.get_photos @me, params[:page], per_page_small
     erb :'photos/list'
