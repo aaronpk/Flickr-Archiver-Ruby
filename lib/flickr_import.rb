@@ -108,16 +108,17 @@ class FlickrImport
             FileUtils.mkdir_p(photo.abs_path(s))
             local_abs_filename = photo.abs_filename(s)
 
-            local_path = photo.path(s)+photo.filename(s)
+            new_local_path = photo.path(s)+photo.filename(s)
 
             # If the photo was renamed, delete the old file first
-            if local_path != photo.send("local_path_#{s}")
-              old_abs_filename = photo.send("local_path_#{s}")
-              puts "! Deleting #{old_abs_filename}"
-              `rm #{local_abs_filename}`
+            old_local_path = photo.send("local_path_#{s}")
+            if old_local_path && new_local_path != old_local_path
+              old_abs_filename = SiteConfig.photo_root + old_local_path
+              puts "! Deleting #{old_local_path}"
+              `rm #{old_abs_filename}`
             end
 
-            photo.send("local_path_#{s}=", local_path)
+            photo.send("local_path_#{s}=", new_local_path)
 
             # Download file from Flickr
             puts "Downloading #{flickrURL} to #{local_abs_filename}"
