@@ -10,11 +10,11 @@ class Tag
   property :updated_at, DateTime
   has n, :photos, :through => Resource
 
-  include FlickrArchivr::Model
+  include FlickrArchivr::PhotoList
 
   # Returns the relative link to this item's page on this website
   def page(photo=nil)
-    "/#{self.user.username}/tag/#{self.id}/#{self.tag}" + (photo.nil? ? "" : "?show=#{photo.id}")
+    "/#{self.username_from_id(self.user_id)}/tag/#{self.id}/#{self.tag}" + (photo.nil? ? "" : "?show=#{photo.id}")
   end
 
   def verify_permission!(user, auth_user)

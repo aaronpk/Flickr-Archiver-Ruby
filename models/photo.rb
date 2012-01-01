@@ -126,7 +126,7 @@ class Photo
 
   # Returns the relative link to this photo's page on this website
   def page
-    "/#{self.user.username}/photo/#{self.id}/#{self.filename_from_title}"
+    "/#{self.username}/photo/#{self.id}/#{self.filename_from_title}"
   end
 
   # Return attributes for width and height for inserting into an <img> tag

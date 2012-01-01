@@ -11,11 +11,11 @@ class Place
 
   property :num, Integer, :default => 0
 
-  include FlickrArchivr::Model
+  include FlickrArchivr::PhotoList
 
   # Returns the relative link to this item's page on this website
   def page(photo=nil)
-    "/#{self.user.username}/place/#{self.id}/#{self.title_urlsafe}" + (photo.nil? ? "" : "?show=#{photo.id}")
+    "/#{self.username_from_id(self.user_id)}/place/#{self.id}/#{self.title_urlsafe}" + (photo.nil? ? "" : "?show=#{photo.id}")
   end
 
   def title_urlsafe
