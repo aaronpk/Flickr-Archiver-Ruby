@@ -24,11 +24,10 @@ end
 get '/:username/?' do
   begin
     load_user params[:username]
-    if @me && @me.id == @user.id 
-      @photos = @user.photos.all(:order => [:date_uploaded.desc]).page(params[:page] || 1, :per_page => per_page)
-    else
-      @photos = @user.photos.all(:public => true, :order => [:date_uploaded.desc]).page(params[:page] || 1, :per_page => per_page)
+    if params[:show]
+      params[:page] = @user.page_for_photo params[:show], per_page
     end
+    @photos = @user.get_photos @me, params[:page], per_page
     erb :'photos/index'
   rescue FlickrArchivr::Error => e
     erb :"#{e.erb_template}"

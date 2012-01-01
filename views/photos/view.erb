@@ -35,6 +35,11 @@
     </div>
     <% end %>
 
+    <div class="sidebar-widget">
+      <h3>This photo belongs to</h3>
+      <p><a href="<%= @photo.user.page @photo %>"><%= @photo.user.username %>'s photostream</a>
+    </div>
+
     <% if @people.count > 0 %>
     <div class="sidebar-widget">
       <h3>People</h3>

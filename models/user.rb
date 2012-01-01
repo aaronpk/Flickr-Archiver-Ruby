@@ -19,4 +19,26 @@ class User
   has n, :tags
   has n, :photosets
   has n, :people
+
+  include FlickrArchivr::PhotoList
+
+  def page(photo=nil)
+    "/#{self.username}" + (photo.nil? ? "" : "?show=#{photo.id}")
+  end
+
+  def page_for_photo(photo_id, per_page)
+    repository.adapter.select('SELECT page_num FROM (
+      SELECT (@row_num := @row_num + 1) AS row_num, FLOOR((@row_num-1) / ?) + 1 AS page_num, id
+      FROM (
+        SELECT photos.id, photos.date_uploaded
+        FROM `photos`
+        JOIN (SELECT @row_num := 0) r
+        WHERE `photos`.`user_id` = ?
+        ORDER BY `photos`.`date_uploaded` DESC
+      ) AS photo_list
+    ) AS tmp
+    WHERE id = ?
+    ', per_page, self.id, photo_id)[0]
+  end
+
 end
