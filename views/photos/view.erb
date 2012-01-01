@@ -38,6 +38,13 @@
     <div class="sidebar-widget">
       <h3>This photo belongs to</h3>
       <p><a href="<%= @photo.user.page @photo %>"><%= @photo.user.username %>'s photostream</a>
+      <% if @me == @user %>
+      <ul>
+        <% @photo.sizes.reverse.each do |s| %>
+          <li><a href="<%= @photo.full_url(s) %>"><%= Photo.name_for_size(s) %> <%= (s == 'o' ? @photo.format : '') %> (<%= "#{@photo.width(s)}x#{@photo.height(s)}" %>)</a></li>
+        <% end %>
+      </li>
+      <% end %>
     </div>
 
     <% if @people.count > 0 %>

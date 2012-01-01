@@ -138,6 +138,14 @@ class Photo
     end
   end
 
+  def width(size)
+    self.send("width_#{size}")
+  end
+
+  def height(size)
+    self.send("height_#{size}")
+  end
+
   # Return a complete image tag for the best version of the photo that fits within the requested size
   def img_tag(size)
     # Iterate through self.sizes backwards starting from #{size}
@@ -173,9 +181,30 @@ class Photo
     true
   end
 
+  def sizes
+    response = []
+    Photo.sizes.each do |s|
+      response << s if self.send('local_path_'+s)
+    end
+    response
+  end
+
   def self.sizes
     ['sq','t','s','m','z','l','o']
     #['sq','t','s','m','z','l']
+  end
+
+  def self.name_for_size(size)
+    {
+      'sq' => 'Square',
+      't' => 'Tiny',
+      's' => 'Small',
+      'm' => 'Medium',
+      'z' => 'Something',
+      'l' => 'Large',
+      'o' => 'Original',
+      'v' => 'Video'
+    }[size]
   end
 
   def self.create_from_flickr(obj, user)
