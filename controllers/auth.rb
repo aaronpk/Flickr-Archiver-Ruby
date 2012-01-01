@@ -1,6 +1,5 @@
-namespace '/auth' do
 
-  get '/flickr' do
+  get '/auth/flickr' do
     # Send to the Flickr auth URL
     session[:access_token] = nil
     session[:user_id] = nil
@@ -11,7 +10,7 @@ namespace '/auth' do
     redirect auth_url
   end
   
-  get '/flickr/callback' do
+  get '/auth/flickr/callback' do
     puts "Redirect from Flickr"
     puts params
     begin
@@ -38,10 +37,9 @@ namespace '/auth' do
     end
   end
 
-  get '/flickr/error' do
+  get '/auth/flickr/error' do
     session[:user_id] = nil
     session[:access_token] = nil
     erb :error
   end
 
-end
