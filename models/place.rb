@@ -33,7 +33,7 @@ class Place
 
   def page_for_photo(photo_id, per_page)
     repository.adapter.select('SELECT page_num FROM (
-      SELECT (@row_num := @row_num + 1) AS row_num, FLOOR((@row_num-1) / ?) + 1 AS page_num, id, date_uploaded
+      SELECT (@row_num := @row_num + 1) AS row_num, FLOOR((@row_num-1) / ?) + 1 AS page_num, id
       FROM (
         SELECT photos.id, photos.date_uploaded
         FROM `photos`
