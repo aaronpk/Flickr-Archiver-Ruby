@@ -1,5 +1,9 @@
 body {
-  padding-top: 40px;
+  padding-top: 60px;
+}
+
+.page-title {
+  margin-bottom: 10px;
 }
 
 /**
