@@ -135,7 +135,9 @@ class FlickrImport
         if mode == 'import'
           should_download = true
         else
-          should_download = previousSecret != photo.secret
+          should_download = false
+          should_download = true if previousSecret != photo.secret
+          should_download = true if photo.path('sq')+photo.filename('sq') != photo.local_path_sq
         end
 
         if should_download
