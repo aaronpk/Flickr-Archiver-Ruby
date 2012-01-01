@@ -88,6 +88,9 @@ get '/:username/person/:id/?*' do
     raise FlickrArchivr::NotFoundError.new if @list.nil?
     @list.verify_permission! @user, @me
     @title = "Photos of #{@list.realname}"
+    if params[:show]
+      params[:page] = @list.page_for_photo params[:show], per_page_small
+    end
     @photos = @list.get_photos @me, params[:page], per_page_small
     erb :'photos/list'
   rescue FlickrArchivr::Error => e
@@ -119,6 +122,9 @@ get '/:username/place/:id/?*' do
     raise FlickrArchivr::NotFoundError.new if @list.nil?
     @list.verify_permission! @user, @me
     @title = @list.name
+    if params[:show]
+      params[:page] = @list.page_for_photo params[:show], per_page_small
+    end
     @photos = @list.get_photos @me, params[:page], per_page_small
     erb :'photos/list'
   rescue FlickrArchivr::Error => e
@@ -133,6 +139,9 @@ get '/:username/tag/:id/?*' do
     raise FlickrArchivr::NotFoundError.new if @list.nil?
     @list.verify_permission! @user, @me
     @title = @list.name
+    if params[:show]
+      params[:page] = @list.page_for_photo params[:show], per_page_small
+    end
     @photos = @list.get_photos @me, params[:page], per_page_small
     erb :'photos/list'
   rescue FlickrArchivr::Error => e
