@@ -71,7 +71,7 @@ class FlickrImport
         #photos = @flickr.people.getPhotos :min_upload_date => "2011-12-13", :user_id => "me", :per_page => 1, :max_upload_date => "2011-12-14", :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
       else
         # Flickr limits the recentlyUpdated feed to at most 500 at a time
-        photos = @flickr.photos.recentlyUpdated :min_date => @user.import_timestamp, :per_page => 3, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
+        photos = @flickr.photos.recentlyUpdated :min_date => @user.import_timestamp, :per_page => 500, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
         # For 'update' mode, we want to iterate through photos oldest to newest, but flickr returns them in descending order
         photos = photos.to_a.reverse
       end
