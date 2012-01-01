@@ -102,6 +102,9 @@ get '/:username/set/:id/?*' do
     raise FlickrArchivr::NotFoundError.new if @list.nil?
     @list.verify_permission! @user, @me
     @title = @list.title
+    if params[:show]
+      params[:page] = @list.page_for_photo params[:show], per_page_small
+    end
     @photos = @list.get_photos @me, params[:page], per_page_small
     erb :'photos/list'
   rescue FlickrArchivr::Error => e

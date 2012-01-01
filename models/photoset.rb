@@ -36,6 +36,24 @@ class Photoset
     true
   end
 
+  def page_for_photo(photo_id, per_page)
+    repository.adapter.select('SELECT page_num FROM (
+      SELECT (@row_num := @row_num + 1) AS row_num, FLOOR((@row_num-1) / ?) + 1 AS page_num, id, date_uploaded
+      FROM (
+        SELECT photos.id, photos.date_uploaded
+        FROM `photos`
+        JOIN (SELECT @row_num := 0) r
+        INNER JOIN `photo_photosets` ON `photos`.`id` = `photo_photosets`.`photo_id` 
+        INNER JOIN `photosets` ON `photo_photosets`.`photoset_id` = `photosets`.`id`
+        WHERE `photo_photosets`.`photoset_id` = ?
+        GROUP BY `photos`.`id`
+        ORDER BY `photos`.`date_uploaded` DESC
+      ) AS photo_list
+    ) AS tmp
+    WHERE id = ?
+    ', per_page, self.id, photo_id)[0]
+  end
+
   def self.create_from_flickr(obj, user)
     set = Photoset.new
     set.user = user
