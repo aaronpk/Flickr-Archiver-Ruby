@@ -30,6 +30,10 @@ class User
     end
   end
 
+  def get_tags(auth_user, page, per_page)
+    self.tags.all(:order => [:num.desc, :updated_at.desc, :created_at.desc, :id.desc]).page(page || 1, :per_page => per_page)
+  end
+
   def page(photo=nil)
     "/#{self.username}" + (photo.nil? ? "" : "?show=#{photo.id}")
   end
