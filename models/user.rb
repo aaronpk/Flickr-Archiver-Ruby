@@ -26,7 +26,7 @@ class User
     if auth_user && auth_user.id == self.id
       self.photosets.all(:order => [:sequence.asc, :updated_date.desc, :created_date.desc, :id.desc]).page(page || 1, :per_page => per_page)
     else
-      self.photosets.all(:public => true, :order => [:sequence.asc, :updated_date.desc, :created_date.desc, :id.desc]).page(page || 1, :per_page => per_page)
+      self.photosets.all(:is_public => true, :order => [:sequence.asc, :updated_date.desc, :created_date.desc, :id.desc]).page(page || 1, :per_page => per_page)
     end
   end
 
