@@ -11,20 +11,32 @@
   <div class="span16">
 
     <div class="sets">
-      <% @sets.each do |photoset| next if photoset.cover_photo.nil? %>
+    <%
+      @sets.each_with_index do |photoset,i|
+        next if photoset.cover_photo.nil?
+        %>
         <div class="set">
           <div class="set-in">
             <a href="<%= photoset.page %>" class="set-thumbnail">
-              <img class="thumbnail" src="<%= photoset.cover_photo.full_url('sq') %>" <%= photoset.cover_photo.wh_attr('sq') %> />
+              <% if @page == 1 && i < 6 %>
+                <!-- <img class="thumbnail" src="http://placehold.it/240x160" width="240" height="160" /> -->
+              <% else %>
+                <!-- <img class="thumbnail" src="http://placehold.it/75x75" width="75" height="75" /> -->
+              <% end %>
+              <% size = (@page == 1 && i < 6 ? 's' : 'sq') %>
+              <img class="thumbnail" src="<%= photoset.cover_photo.full_url(size) %>" <%= photoset.cover_photo.wh_attr(size) %> />
             </a>
             <h4><a href="<%= photoset.page %>"><%== photoset.title %></a></h4>
             <p><span class="num"><%= photoset.num %></span> photos</p>
           </div>
         </div>
-      <% end %>
+      <% 
+      end 
+    %>
     </div>
 
     <div class="pagination">
+      <%= @sets.pager.to_html("#{@user.username}/sets", :size => 9, :more_text => '<span>...</span>') %>
     </div>
     
   </div>
