@@ -123,7 +123,7 @@ end
 get '/:username/sets/?' do
   begin
     load_user params[:username]
-    @sets = @user.get_sets @me, params[:page], 6*4
+    @sets = @user.get_sets @me, params[:page], 3*5
     @page = params[:page] || 1
     erb :sets
   rescue FlickrArchivr::Error => e

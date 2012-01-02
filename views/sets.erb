@@ -8,7 +8,8 @@
     <%
       @sets.each_with_index do |photoset,i|
         next if photoset.cover_photo.nil?   # This shouldn't happen regularly, but may happen if a set was deleted and the list was viewed before the sync script caught up
-        size = (@page.to_i == 1 && i < 6 ? 's' : 'sq')
+        # size = (@page.to_i == 1 && i < 6 ? 's' : 'sq')
+        size = 's'
         %>
         <div class="set">
           <div class="set-in <%= size %>">
