@@ -200,7 +200,7 @@ class Photo
       't' => 'Tiny',
       's' => 'Small',
       'm' => 'Medium',
-      'z' => 'Something',
+      'z' => 'Medium',
       'l' => 'Large',
       'o' => 'Original',
       'v' => 'Video'

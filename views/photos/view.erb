@@ -39,11 +39,15 @@
       <h3>This photo belongs to</h3>
       <p><a href="<%= @photo.user.page @photo %>"><%= @photo.user.username %>'s photostream</a>
       <% if @me == @user %>
-      <ul>
+      <table class="condensed-table photo-sizes">
         <% @photo.sizes.reverse.each do |s| %>
-          <li><a href="<%= @photo.full_url(s) %>"><%= Photo.name_for_size(s) %> <%= (s == 'o' ? @photo.format : '') %> (<%= "#{@photo.width(s)}x#{@photo.height(s)}" %>)</a></li>
+          <tr class="<%= s %><%= (s != 'o' ? ' hidden start-hidden' : '') %>">
+            <td class="dropdown"><% if s == 'o' %><a href="javascript:void(0);" class="dropdown-toggle closed"></a><% end %></td>
+            <td><a href="<%= @photo.full_url(s) %>"><%= Photo.name_for_size(s) %> <%= (s == 'o' ? @photo.format : '') %></td>
+            <td class="dimensions"><%= "#{@photo.width(s)} &times; #{@photo.height(s)}" %></a></td>
+          </tr>
         <% end %>
-      </li>
+      </table>
       <% end %>
     </div>
 

@@ -91,3 +91,37 @@ body {
   padding: 0 4px;
 }
 
+/**
+ * Size Dropdown
+ */
+.photo-sizes .dropdown {
+  width: 26px;
+}
+.photo-sizes .dropdown-toggle.closed::after {
+  vertical-align: top;
+  margin-top: 4px;
+  border-bottom: 4px solid transparent;
+  border-top: 4px solid transparent;
+  border-left: 4px solid black;
+  border-right: none;
+}
+.photo-sizes .dropdown-toggle.open::after {
+  vertical-align: top;
+  margin-top: 7px;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid black;
+}
+.photo-sizes .hidden {
+  display: none;
+}
+.condensed-table.photo-sizes td {
+  padding: 3px 2px;
+}
+.photo-sizes tr.o td {
+  border-top: none;
+}
+.photo-sizes .dimensions {
+  font-size: 85%;
+}
+
