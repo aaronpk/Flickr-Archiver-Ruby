@@ -42,6 +42,13 @@ class Photoset
 
   def verify_permission!(user, auth_user)
     raise FlickrArchivr::NotFoundError if self.user_id != user.id
+    if auth_user
+      # Disallow if the photo is not public and the authenticated user does not own the photo
+      raise FlickrArchivr::ForbiddenError if !self.is_public && self.user_id != auth_user.id
+    else
+      # Disallow if the photo is not public
+      raise FlickrArchivr::ForbiddenError if !self.is_public
+    end
     true
   end
 

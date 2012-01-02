@@ -14,16 +14,11 @@
     <%
       @sets.each_with_index do |photoset,i|
         next if photoset.cover_photo.nil?   # This shouldn't happen regularly, but may happen if a set was deleted and the list was viewed before the sync script caught up
-        size = (@page == 1 && i < 6 ? 's' : 'sq')
+        size = (@page.to_i == 1 && i < 6 ? 's' : 'sq')
         %>
         <div class="set">
           <div class="set-in <%= size %>">
             <a href="<%= photoset.page %>" class="set-thumbnail">
-              <% if @page == 1 && i < 6 %>
-                <!-- <img class="thumbnail" src="http://placehold.it/240x160" width="240" height="160" /> -->
-              <% else %>
-                <!-- <img class="thumbnail" src="http://placehold.it/75x75" width="75" height="75" /> -->
-              <% end %>
               <img class="thumbnail" src="<%= photoset.cover_photo.full_url(size) %>" <%= photoset.cover_photo.wh_attr(size) %> />
             </a>
             <h4><a href="<%= photoset.page %>"><%== photoset.title %></a></h4>
