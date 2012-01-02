@@ -1,0 +1,37 @@
+<div class="container">
+
+<div class="row page-title">
+  <div class="span16">
+    <h2><%== @title %></h2>
+  </div>
+</div>
+
+<div class="row">
+
+  <div class="span12">
+
+    <ul class="sets">
+      <% @sets.each do |photoset| %>
+        <li>
+          <ul class="media-grid"><li class=""><a href="<%= photoset.page %>"><img class="thumbnail" src="<%= photoset.cover_photo.full_url('sq') %>" <%= photoset.cover_photo.wh_attr('sq') %> /></a></li></ul>
+          <h4><a href="<%= photoset.page %>"><%== photoset.title %></a></h4>
+          <p><%= photoset.num %> photos</p>
+        </li>
+      <% end %>
+    </ul>
+
+    <div class="pagination">
+    </div>
+    
+  </div><!-- left col -->
+  <div class="span4">
+    
+    <div class="sidebar-widget">
+      <p></p>
+    </div>    
+
+  </div><!-- right col-->
+
+</div><!-- row -->
+
+</div><!-- container -->

@@ -120,6 +120,16 @@ get '/:username/tag/:id/?*' do
   end
 end
 
+get '/:username/sets/?' do
+  begin
+    load_user params[:username]
+    @sets = @user.get_sets @me, params[:page], per_page_small
+    erb :sets
+  rescue FlickrArchivr::Error => e
+    erb :"#{e.erb_template}"
+  end
+end
+
 def format_text(text) 
   text.gsub(/\n/, '<br />')
 end

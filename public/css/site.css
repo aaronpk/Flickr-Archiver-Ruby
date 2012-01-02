@@ -125,3 +125,16 @@ body {
   font-size: 85%;
 }
 
+/**
+ * List of sets
+ */
+ul.sets {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+ul.sets li {
+  float: left;
+  margin: 0 20px 0 0;
+  padding: 0;
+}
