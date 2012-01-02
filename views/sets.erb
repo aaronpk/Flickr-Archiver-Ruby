@@ -8,29 +8,26 @@
 
 <div class="row">
 
-  <div class="span12">
+  <div class="span16">
 
-    <ul class="sets">
+    <div class="sets">
       <% @sets.each do |photoset| next if photoset.cover_photo.nil? %>
-        <li>
-          <ul class="media-grid"><li class=""><a href="<%= photoset.page %>"><img class="thumbnail" src="<%= photoset.cover_photo.full_url('sq') %>" <%= photoset.cover_photo.wh_attr('sq') %> /></a></li></ul>
-          <h4><a href="<%= photoset.page %>"><%== photoset.title %></a></h4>
-          <p><%= photoset.num %> photos</p>
-        </li>
+        <div class="set">
+          <div class="set-in">
+            <a href="<%= photoset.page %>" class="set-thumbnail">
+              <img class="thumbnail" src="<%= photoset.cover_photo.full_url('sq') %>" <%= photoset.cover_photo.wh_attr('sq') %> />
+            </a>
+            <h4><a href="<%= photoset.page %>"><%== photoset.title %></a></h4>
+            <p><span class="num"><%= photoset.num %></span> photos</p>
+          </div>
+        </div>
       <% end %>
-    </ul>
+    </div>
 
     <div class="pagination">
     </div>
     
-  </div><!-- left col -->
-  <div class="span4">
-    
-    <div class="sidebar-widget">
-      <p></p>
-    </div>    
-
-  </div><!-- right col-->
+  </div>
 
 </div><!-- row -->
 

@@ -97,7 +97,7 @@ body {
 .photo-sizes .dropdown {
   width: 26px;
 }
-.photo-sizes .dropdown-toggle.closed::after {
+.photo-sizes .dropdown-toggle.closed:after {
   vertical-align: top;
   margin-top: 4px;
   border-bottom: 4px solid transparent;
@@ -105,7 +105,7 @@ body {
   border-left: 4px solid black;
   border-right: none;
 }
-.photo-sizes .dropdown-toggle.open::after {
+.photo-sizes .dropdown-toggle.open:after {
   vertical-align: top;
   margin-top: 7px;
   border-left: 4px solid transparent;
@@ -128,13 +128,43 @@ body {
 /**
  * List of sets
  */
-ul.sets {
-  list-style-type: none;
+.sets:after {
+  clear: both;
+}
+.sets {
+  display: table;
   margin: 0;
   padding: 0;
 }
-ul.sets li {
-  float: left;
+.sets .set {
+  display: inline-block;
   margin: 0 20px 0 0;
   padding: 0;
+  vertical-align: top;
+}
+.sets .set-in {
+  width: 126px;
+}
+.sets .set-thumbnail {
+  border: 1px solid #DDDDDD;
+  border-radius: 4px 4px 4px 4px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
+  padding: 4px;
+  float: left;
+}
+.sets .set-thumbnail img {
+  display: block;
+  border: none;
+}
+.sets .set h4 {
+  clear: both;
+  line-height: 19px;
+  padding-top: 8px;
+}
+.sets .set p {
+  color: #777;
+  font-size: 11px;
+}
+.sets .set p .num {
+  font-weight: bold;
 }
