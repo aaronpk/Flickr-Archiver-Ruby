@@ -177,3 +177,53 @@ body {
 .sets .set p .num {
   font-weight: bold;
 }
+
+/**
+ * List of tags
+ */
+.tags ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+.tags ul li {
+  margin: 0 10px 4px 0;
+  padding: 0;
+  float: left;
+}
+.tags ul {
+  font-size: 14px;
+}
+.tags .weight-0 {
+  font-size: 100%;
+}
+.tags .weight-1 {
+  font-size: 105%;
+}
+.tags .weight-2 {
+  font-size: 110%;
+}
+.tags .weight-3 {
+  font-size: 115%;
+}
+.tags .weight-4 {
+  font-size: 120%;
+}
+.tags .weight-5 {
+  font-size: 130%;
+}
+.tags .weight-6 {
+  font-size: 140%;
+}
+.tags .weight-7 {
+  font-size: 150%;
+}
+.tags .weight-8 {
+  font-size: 160%;
+}
+.tags .weight-9 {
+  font-size: 170%;
+}
+.tags .weight-10 {
+  font-size: 180%;
+}

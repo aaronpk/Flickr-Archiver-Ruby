@@ -49,10 +49,8 @@
                   <% @user.get_tags(@me, 1, 7).each do |tag| %>
                     <li><a href="<%= tag.page %>"><%= tag.name %></a></li>
                   <% end %>
-<!--                   
                   <li class="divider"></li>
                   <li><a href="/<%= @user.username %>/tags">All Tags</a></li>
- -->                
                 </ul>
               </li>
             </ul>

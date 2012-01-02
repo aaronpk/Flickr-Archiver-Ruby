@@ -131,6 +131,17 @@ get '/:username/sets/?' do
   end
 end
 
+get '/:username/tags/?' do
+  begin
+    load_user params[:username]
+    @tags = @user.get_popular_tags @me
+    @max_photos = (@tags.to_a.max {|a,b| a.num <=> b.num}).num
+    erb :tags
+  rescue FlickrArchivr::Error => e
+    erb :"#{e.erb_template}"
+  end
+end
+
 def format_text(text) 
   text.gsub(/\n/, '<br />')
 end

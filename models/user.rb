@@ -34,6 +34,10 @@ class User
     self.tags.all(:order => [:num.desc, :updated_at.desc, :created_at.desc, :id.desc]).page(page || 1, :per_page => per_page)
   end
 
+  def get_popular_tags(auth_user)
+    self.tags.all(:order => [:num.desc, :updated_at.desc, :created_at.desc, :id.desc]).page(1, :per_page => 150).all.sort! {|a,b| a.name.downcase <=> b.name.downcase}
+  end
+
   def page(photo=nil)
     "/#{self.username}" + (photo.nil? ? "" : "?show=#{photo.id}")
   end
