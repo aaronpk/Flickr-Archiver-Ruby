@@ -26,7 +26,7 @@
     <div class="topbar" data-dropdown="dropdown">
       <div class="topbar-inner">
         <div class="container">
-          <h3><a href="/<%= (@me ? @me.username : '') %>"><%= (@me ? @me.username : 'Archivr') %></a></h3>
+          <h3><a href="/<%= (@user ? @user.username : '') %>"><%= (@user ? @user.username : 'Archivr') %></a></h3>
 
           <% if @user %>
             <ul class="nav">
@@ -50,6 +50,8 @@
                 <ul class="dropdown-menu">
                   <li><a href="/<%= @me.username %>">Photos</a></li>
                   <li><a href="/<%= @me.username %>/sets">Sets</a></li>
+                  <li class="divider"></li>
+                  <li><a href="/auth/signout">Sign Out</a></li>
                 </ul>
               </li>
             </ul>
