@@ -52,29 +52,7 @@ class FlickrImport
 
   def self.process(mode, args)
     puts "Starting #{mode} for user: #{args.username}"
-    @user = User.first :username => args.username
-
-    if @user.nil?
-      puts "ERROR: No user '#{args.username}'"
-      exit!
-    end
-
-    if @user.access_token.nil?
-      puts "ERROR: No Flickr tokens for user #{args.username}"
-      exit!
-    end
-
-    @flickr = FlickRaw::Flickr.new
-    @flickr.access_token = @user.access_token
-    @flickr.access_secret = @user.access_secret
-
-    begin
-      login = @flickr.test.login
-      puts "Flickr auth test passed #{login.username}"
-    rescue FlickRaw::FailedResponse => e
-      puts "ERROR: Flickr authentication failed : #{e.msg}"
-      exit!
-    end
+    self.prepare_import args
 
     if mode == 'import' && @user.import_timestamp == 0
       @user.import_timestamp = Time.now.to_i
@@ -233,6 +211,8 @@ class FlickrImport
             set = Photoset.first :flickr_id => photoSet.id, :user => @user
             if set.nil?
               set = Photoset.create_from_flickr photoSet, @user
+            else
+              set.update_from_flickr(photoSet)
             end
             photo.photosets << set
             set.num = PhotoPhotoset.count(:photoset => set) + 1
@@ -307,6 +287,89 @@ class FlickrImport
 
     puts "FINISHED!!"
 
-  end   # do_import
+  end   # process
+
+  def self.import_sets(args)
+    puts "Starting set import for user: #{args.username}"
+    self.prepare_import args
+
+    flickrSets = @flickr.photosets.getList :page => 1, :per_page => 4
+
+    totalPages = flickrSets.pages
+    puts "====== Found #{flickrSets.total} sets in #{totalPages} pages"
+
+    sequence = 0
+    set_ids = []
+
+    (1..totalPages).each do |page|
+      puts
+      puts "==== Beginning page #{page}"
+
+      if page > 1
+        flickrSets = @flickr.photosets.getList :page => page, :per_page => 4
+      end
+
+      flickrSets.each do |photoSet|
+        puts "---- #{photoSet.title}"
+
+        set_ids << photoSet.id
+
+        set = Photoset.first :flickr_id => photoSet.id, :user => @user
+        if set.nil?
+          set = Photoset.create_from_flickr photoSet, @user
+        else
+          set.update_from_flickr(photoSet)
+        end
+
+        set.sequence = sequence
+        sequence += 1
+
+        set.save()
+      end
+    end
+
+    puts "Done importing new sets. Now looking for deleted sets..."
+
+    # Loop through all sets in the DB. If there are any that are not in the list of set_ids just seen, delete them.
+
+    if set_ids.length > 0
+      @user.photosets.each do |photoset|
+        if !set_ids.include?(photoset.flickr_id)
+          puts "\tSet '#{photoset.title}' was deleted"
+          photoset.destroy
+        end
+      end
+    else
+      puts "Looks like there was an error retrieving sets. Won't delete anything this time."
+    end
+
+    puts "Finished!!"
+  end
+
+  def self.prepare_import(args)
+    @user = User.first :username => args.username
+
+    if @user.nil?
+      puts "ERROR: No user '#{args.username}'"
+      exit!
+    end
+
+    if @user.access_token.nil?
+      puts "ERROR: No Flickr tokens for user #{args.username}"
+      exit!
+    end
+
+    @flickr = FlickRaw::Flickr.new
+    @flickr.access_token = @user.access_token
+    @flickr.access_secret = @user.access_secret
+
+    begin
+      login = @flickr.test.login
+      puts "Flickr auth test passed #{login.username}"
+    rescue FlickRaw::FailedResponse => e
+      puts "ERROR: Flickr authentication failed : #{e.msg}"
+      exit!
+    end
+  end
 
 end

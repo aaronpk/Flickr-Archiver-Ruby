@@ -24,9 +24,9 @@ class User
 
   def get_sets(auth_user, page, per_page)
     if auth_user && auth_user.id == self.id
-      self.photosets.all(:order => [:updated_date.desc, :created_date.desc, :id.desc]).page(page || 1, :per_page => per_page)
+      self.photosets.all(:order => [:sequence.asc, :updated_date.desc, :created_date.desc, :id.desc]).page(page || 1, :per_page => per_page)
     else
-      self.photosets.all(:public => true, :order => [:updated_date.desc, :created_date.desc, :id.desc]).page(page || 1, :per_page => per_page)
+      self.photosets.all(:public => true, :order => [:sequence.asc, :updated_date.desc, :created_date.desc, :id.desc]).page(page || 1, :per_page => per_page)
     end
   end
 

@@ -13,6 +13,7 @@ namespace :db do
 end
 
 namespace :flickr do
+
   task :import, :username do |t, username|
     init
     FlickrImport.do_import username
@@ -21,6 +22,13 @@ namespace :flickr do
   task :update, :username do |t, username|
     FlickrImport.do_update username
   end
+
+  task :sets, :username do |t, username|
+    FlickrImport.import_sets username
+  end
+
+
+  # Migration scripts. No longer needed
 
   task :add_local_path do
     FlickrImportMigrate.add_local_path

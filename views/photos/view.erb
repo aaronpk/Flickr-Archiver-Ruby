@@ -64,7 +64,7 @@
 
     <% if @photosets.count > 0 %>
     <div class="sidebar-widget">
-      <h3>Sets</h3>
+      <h3>Sets <a href="/<%= @user.username %>/sets" class="small-link">all sets</a></h3>
       <ul>
         <% @photosets.each do |photoset| %>
           <li><a href="<%= photoset.page @photo %>"><%= photoset.title %></a></li>
