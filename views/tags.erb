@@ -7,7 +7,7 @@
     <div class="tags">
       <ul>
         <% @tags.each_with_index do |tag,i| %>
-          <li class="weight-<%= ((tag.num / @max_photos) * 10).round %>"><a href="<%= tag.page %>"><%= tag.name %></a></li>
+          <li class="weight-<%= ((tag.num.to_f * 10.0) / @max_photos.to_f).round %>"><a href="<%= tag.page %>"><%= tag.name %></a></li>
         <% end %>
       </ul>
     </div>
