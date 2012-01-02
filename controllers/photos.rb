@@ -58,7 +58,7 @@ get '/:username/person/:id/?*' do
     @list = Person.first :id => params[:id], :user => @user
     raise FlickrArchivr::NotFoundError.new if @list.nil?
     @list.verify_permission! @user, @me
-    @title = "Photos of #{@list.realname}"
+    @title = "Photos of #{@list.display_name}"
     if params[:show]
       params[:page] = @list.page_for_photo @me, params[:show], per_page_small
     end

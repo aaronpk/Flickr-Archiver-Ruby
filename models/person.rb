@@ -13,7 +13,7 @@ class Person
   include FlickrArchivr::PhotoList
 
   def display_name
-    self.realname || self.username
+    (self.realname && (!self.realname.empty?) ? self.realname : self.username)
   end
 
   def list_type
@@ -27,7 +27,7 @@ class Person
 
   def title_urlsafe
     if self.username
-      self.username
+      self.username.gsub(/[^A-Za-z0-9_-]/, '-').gsub(/-+/, '-')
     else
       self.realname.gsub(/[^A-Za-z0-9_-]/, '-').gsub(/-+/, '-')
     end
