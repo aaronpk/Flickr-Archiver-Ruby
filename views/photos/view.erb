@@ -69,7 +69,7 @@
           erb :'partial/context_table', :layout => false
         end
       %>
-      <%= (params[:person] ? '<h5>Other People</h5>' : '' ) %>
+      <%= (params[:person] && @people.length > 1 ? '<h5>Other People</h5>' : '' ) %>
       <ul>
         <% @people.each do |person| next if params[:person].to_i == person.id %>
           <li><a href="<%= person.page @photo %>"><%= person.realname %></a></li>
