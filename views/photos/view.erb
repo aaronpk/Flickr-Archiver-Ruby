@@ -62,7 +62,7 @@
 
     <% if @people.count > 0 %>
     <div class="sidebar-widget">
-      <h3>People</h3>
+      <h3>People <a href="/<%= @user.username %>/people" class="small-link">all people</a></h3>
       <%=
         if params[:person]
           @item = @people.get(params[:person])
@@ -98,7 +98,7 @@
 
     <% if @photo_tags.count > 0 %>
     <div class="sidebar-widget">
-      <h3>Tags</h3>
+      <h3>Tags <a href="/<%= @user.username %>/tags" class="small-link">all tags</a></h3>
       <%=
         if params[:tag] 
           @item = @photo.tags.get(params[:tag])
