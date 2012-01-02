@@ -38,6 +38,10 @@ class User
     self.tags.all(:order => [:num.desc, :updated_at.desc, :created_at.desc, :id.desc]).page(page || 1, :per_page => per_page)
   end
 
+  def get_people(auth_user, page, per_page)
+    self.people.all(:order => [:num.desc, :id.desc]).page(page || 1, :per_page => per_page)
+  end
+
   def get_popular_tags(auth_user)
     self.tags.all(:order => [:num.desc, :updated_at.desc, :created_at.desc, :id.desc]).page(1, :per_page => 150).all.sort! {|a,b| a.name.downcase <=> b.name.downcase}
   end

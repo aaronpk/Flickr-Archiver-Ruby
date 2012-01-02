@@ -19,6 +19,14 @@
         </li>
       <% end %>
     </ul>
+    <% if @photos.length == 0 %>
+      <section id="home" style="margin-top: 30px;">
+        <div class="hero-unit" style="text-align: center;">
+          <h2>No Photos Found</h2>
+          <p>Sorry, there are no photos for you here.</p>
+        </div>
+      </section>
+    <% end %>
 
     <div class="pagination">
       <%= @photos.pager.to_html(@list.page, :size => 9, :more_text => '<span>...</span>') %>

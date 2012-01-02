@@ -142,6 +142,17 @@ get '/:username/tags/?' do
   end
 end
 
+get '/:username/people/?' do
+  begin
+    load_user params[:username]
+    @people = @user.get_people @me, params[:page], 3*5
+    @page = params[:page] || 1
+    erb :people
+  rescue FlickrArchivr::Error => e
+    erb :"#{e.erb_template}"
+  end
+end
+
 def format_text(text) 
   text.gsub(/\n/, '<br />')
 end

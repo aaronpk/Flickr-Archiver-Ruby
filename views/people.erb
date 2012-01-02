@@ -1,0 +1,37 @@
+<div class="container">
+
+<div class="row">
+
+  <div class="span16">
+
+    <div class="sets">
+    <%
+      @people.each_with_index do |person,i|
+        cover = person.cover_photo
+        next if cover.nil?   # This shouldn't happen regularly, but may happen if a person was deleted and the list was viewed before the sync script caught up, or if a person has no public photos
+        # size = (@page.to_i == 1 && i < 6 ? 's' : 'sq')
+        size = 's'
+        %>
+        <div class="set">
+          <div class="set-in <%= size %>">
+            <a href="<%= person.page %>" class="set-thumbnail">
+              <img class="thumbnail" src="<%= cover.full_url(size) %>" <%= cover.wh_attr(size) %> />
+            </a>
+            <h4><a href="<%= person.page %>"><%== person.display_name %></a></h4>
+            <p><span class="num"><%= person.num %></span> photos</p>
+          </div>
+        </div>
+      <% 
+      end 
+    %>
+    </div>
+
+    <div class="pagination">
+      <%= @people.pager.to_html("/#{@user.username}/people", :size => 9, :more_text => '<span>...</span>') %>
+    </div>
+    
+  </div>
+
+</div><!-- row -->
+
+</div><!-- container -->

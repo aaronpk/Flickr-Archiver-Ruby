@@ -38,6 +38,11 @@ class Person
     true
   end
 
+  def cover_photo
+    puts "Retrieving cover photo for #{self.display_name}"
+    self.get_photos(nil, 1, 1)[0]
+  end
+
   # Return the next and previous n photos given this ordering
   def get_context(auth_user, photo_id, num)
     row_num = self.row_for_photo auth_user, photo_id

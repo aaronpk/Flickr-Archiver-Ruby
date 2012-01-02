@@ -1,4 +1,4 @@
-<h5 class="context"><a href="<%= @item.page %>"><%= @item.display_name + (@item.class == User ? "'s photostream" : '') %></a></h5>
+<h5 class="context"><a href="<%= @item.page @photo %>"><%= @item.display_name + (@item.class == User ? "'s photostream" : '') %></a></h5>
 <table class="context-table">
   <tr>
   <% 
