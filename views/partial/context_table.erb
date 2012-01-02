@@ -5,16 +5,38 @@
     context = @item.get_context(@me, @photo.id, 4)
     position = context.to_a.index {|a| @photo.id == a.id}
     puts "Total items: #{context.length} Position: #{position}"
-    if context.length == 5
+    if context.length <= 5
       range = 0..4
-    elsif context.length == 6 && position == 1
-      range = 0..4
-    elsif context.length == 6 && position == 4
-      range = 1..5
     elsif context.length == 6
-      range = 2..6
-    else
-      range = 0..6
+      if position <= 2
+        range = 0..4
+      else
+        range = 1..5
+      end
+    elsif context.length == 7
+      if position <= 2
+        range = 0..4
+      elsif position == 3
+        range = 1..5
+      else
+        range = 2..6
+      end
+    elsif context.length == 8
+      if position <= 2
+        range = 0..4
+      elsif position >= 5
+        range = 3..7
+      else
+        range = (position-2)..(position+2)
+      end
+    elsif context.length == 9
+      if position <= 2
+        range = 0..4
+      elsif position >= 6
+        range = 4..8
+      else
+        range = (position-2)..(position+2)
+      end
     end
     %>
     <% context.to_a[range].each do |context| %>
