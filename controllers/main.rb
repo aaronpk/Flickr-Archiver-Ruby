@@ -22,6 +22,14 @@ get '/?' do
   erb :index
 end
 
+get '/:username/search' do
+  erb :search
+end
+
+post '/:username/search' do 
+  erb :search
+end
+
 get '/me' do
   puts "##############"
   puts session

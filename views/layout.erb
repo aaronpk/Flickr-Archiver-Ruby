@@ -29,8 +29,9 @@
       <div class="topbar-inner">
         <div class="container">
           <h3><a href="/<%= (@me ? @me.username : '') %>">Flickr Archivr</a></h3>
+
           <% if @me %>
-            <ul class="nav secondary-nav">
+            <ul class="nav secondary-nav pull-right">
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle"><%= @me.username %></a>
                 <ul class="dropdown-menu">
@@ -41,6 +42,13 @@
               </li>
             </ul>
           <% end %>
+
+          <% if @user %>
+            <form class="pull-right" action="/<%= @user.username %>/search" method="post">
+              <input type="text" placeholder="Search" name="search">
+            </form>
+          <% end %>
+
         </div>
       </div>
     </div>
