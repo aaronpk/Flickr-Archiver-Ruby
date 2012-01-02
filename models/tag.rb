@@ -79,4 +79,9 @@ class Tag
     tag.name = obj.raw
     tag
   end
+
+  def update_count!
+    self.num = PhotoTag.count :tag_id => self.id
+    self.save
+  end
 end

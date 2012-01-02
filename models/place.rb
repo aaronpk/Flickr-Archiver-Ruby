@@ -65,4 +65,9 @@ class Place
     place.woe_id = (obj.respond_to?('woeid') ? obj.woeid : '')
     place
   end
+
+  def update_count!
+    self.num = PhotoPlace.count :place_id => self.id
+    self.save
+  end
 end

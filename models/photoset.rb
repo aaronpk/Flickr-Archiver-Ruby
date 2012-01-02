@@ -155,4 +155,9 @@ class Photoset
     self.updated_date = Time.at(obj.date_update.to_i) if obj.respond_to?('date_update')
     self.raw = obj.to_hash.to_json if obj.respond_to?('count_views')
   end
+
+  def update_count!
+    self.num = PhotoPhotoset.count :photoset_id => self.id
+    self.save
+  end
 end

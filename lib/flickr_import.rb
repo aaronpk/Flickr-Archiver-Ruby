@@ -42,6 +42,30 @@ class FlickrImport
     puts "FINISHED!"
   end
 
+  def self.update_counts(args)
+    self.prepare_import args
+
+    @user.people.each do |s|
+      puts s.display_name
+      s.update_count!
+    end
+
+    @user.photosets.each do |s|
+      puts s.display_name
+      s.update_count!
+    end
+
+    @user.tags.each do |s|
+      puts s.display_name
+      s.update_count!
+    end
+
+    @user.places.each do |s|
+      puts s.display_name
+      s.update_count!
+    end
+  end
+
   def self.do_import(args)
     self.process 'import', args
   end
@@ -209,7 +233,7 @@ class FlickrImport
           if photo.id && tag_ids.length > 0
             photo.tags.each do |t|
               if !tag_ids.include?(t.id)
-                puts "Tag '#{t.name}' was removed"
+                puts "Tag '#{t.name}' was removed from the photo"
                 photo.tags.delete(t)
               end
             end
@@ -228,8 +252,8 @@ class FlickrImport
               set.update_from_flickr(photoSet)
             end
             photo.photosets << set
-            set.num = PhotoPhotoset.count(:photoset => set) + 1
             set.save
+            set.update_count!
             set_ids << set.id
           end
 
@@ -237,7 +261,7 @@ class FlickrImport
           if photo.id && set_ids.length > 0
             photo.photosets.each do |s|
               if !set_ids.include?(s.id)
-                puts "Set '#{s.title}' was removed"
+                puts "Set '#{s.title}' was removed from the photo"
                 photo.photosets.delete(s)
               end
             end
@@ -261,13 +285,14 @@ class FlickrImport
             else
               PersonPhoto.first_or_create :person => person, :photo => photo
             end
+            person.update_count!
           end
 
           # Delete any relationships for people that were removed
           if photo.id && people_ids.length > 0
             photo.people.each do |s|
               if !people_ids.include?(s.id)
-                puts "Person '#{s.username}' was removed"
+                puts "Person '#{s.username}' was removed from the photo"
                 photo.people.delete(s)
               end
             end
@@ -299,8 +324,8 @@ class FlickrImport
                   place = Place.create_from_flickr type, location.send(type), @user
                 end
                 photo.places << place
-                place.num = PhotoPlace.count(:place => place) + 1
                 place.save
+                place.update_count!
               end
             end
           end

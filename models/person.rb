@@ -93,4 +93,8 @@ class Person
     person
   end
 
+  def update_count!
+    self.num = PersonPhoto.count :person_id => self.id
+    self.save
+  end
 end

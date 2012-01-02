@@ -27,6 +27,11 @@ namespace :flickr do
     FlickrImport.import_sets username
   end
 
+  # Utilities
+
+  task :update_counts, :username do |t, username|
+    FlickrImport.update_counts username
+  end
 
   # Migration scripts. No longer needed
 
