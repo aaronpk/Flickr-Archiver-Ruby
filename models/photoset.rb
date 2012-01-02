@@ -6,6 +6,7 @@ class Photoset
   has n, :photos, :through => Resource
 
   property :flickr_id, String, :length => 50, :index => true
+  property :is_public, Boolean, :default => true
 
   property :title, String, :length => 255
   property :description, Text
@@ -73,6 +74,13 @@ class Photoset
     ', per_page, self.id, photo_id)[0]
   end
 
+  def count_public_photos
+    repository.adapter.select('SELECT SUM(public) AS public
+      FROM photos
+      INNER JOIN photo_photosets ON photos.id = photo_photosets.photo_id 
+      WHERE photo_photosets.photoset_id = ?', self.id)[0]
+  end
+
   def self.create_from_flickr(obj, user)
     set = Photoset.new
     set.user = user
@@ -82,9 +90,9 @@ class Photoset
     set.secret = obj.secret
     set.description = obj.description if obj.respond_to?('description')
     set.num_photos = obj.count_photo if obj.respond_to?('count_photo')
-    set.num_photos = obj.count_photos if obj.respond_to?('count_photos')
+    set.num_photos = obj.photos if obj.respond_to?('photos')
     set.num_videos = obj.count_video if obj.respond_to?('count_video')
-    set.num_videos = obj.count_videos if obj.respond_to?('count_videos')
+    set.num_videos = obj.videos if obj.respond_to?('videos')
     set.flickr_views = obj.view_count if obj.respond_to?('view_count')
     set.flickr_views = obj.count_views if obj.respond_to?('count_views')
     set.flickr_comments = obj.comment_count if obj.respond_to?('comment_count')
@@ -102,9 +110,9 @@ class Photoset
     self.secret = obj.secret
     self.description = obj.description if obj.respond_to?('description')
     self.num_photos = obj.count_photo if obj.respond_to?('count_photo')
-    self.num_photos = obj.count_photos if obj.respond_to?('count_photos')
+    self.num_photos = obj.photos if obj.respond_to?('photos')
     self.num_videos = obj.count_video if obj.respond_to?('count_video')
-    self.num_videos = obj.count_videos if obj.respond_to?('count_videos')
+    self.num_videos = obj.videos if obj.respond_to?('videos')
     self.flickr_views = obj.view_count if obj.respond_to?('view_count')
     self.flickr_views = obj.count_views if obj.respond_to?('count_views')
     self.flickr_comments = obj.comment_count if obj.respond_to?('comment_count')

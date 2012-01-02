@@ -19,7 +19,11 @@ before do
 end
 
 get '/?' do
-  erb :index
+  if @me
+    redirect "/#{@me.username}"
+  else
+    erb :index
+  end
 end
 
 get '/:username/search' do

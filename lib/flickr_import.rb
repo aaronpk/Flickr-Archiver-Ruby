@@ -293,7 +293,7 @@ class FlickrImport
     puts "Starting set import for user: #{args.username}"
     self.prepare_import args
 
-    flickrSets = @flickr.photosets.getList :page => 1, :per_page => 4
+    flickrSets = @flickr.photosets.getList :page => 1, :per_page => 100
 
     totalPages = flickrSets.pages
     puts "====== Found #{flickrSets.total} sets in #{totalPages} pages"
@@ -301,12 +301,14 @@ class FlickrImport
     sequence = 0
     set_ids = []
 
+    # TODO: Figure out how to tell if a set is public or private by searching the photos inside the sets.
+
     (1..totalPages).each do |page|
       puts
       puts "==== Beginning page #{page}"
 
       if page > 1
-        flickrSets = @flickr.photosets.getList :page => page, :per_page => 4
+        flickrSets = @flickr.photosets.getList :page => page, :per_page => 100
       end
 
       flickrSets.each do |photoSet|
@@ -323,6 +325,8 @@ class FlickrImport
 
         set.sequence = sequence
         sequence += 1
+
+        set.is_public = (set.count_public_photos == 0 ? false : true)
 
         set.save()
       end

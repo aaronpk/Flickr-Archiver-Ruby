@@ -10,6 +10,8 @@ class Place
   property :woe_id, String, :length => 30
 
   property :num, Integer, :default => 0
+  property :created_at, DateTime
+  property :updated_at, DateTime
 
   include FlickrArchivr::PhotoList
 
