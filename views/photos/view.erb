@@ -37,7 +37,16 @@
 
     <div class="sidebar-widget">
       <h3>This photo belongs to</h3>
-      <p><a href="<%= @photo.user.page @photo %>"><%= @photo.user.username %>'s photostream</a>
+
+      <% if params[:set] || params[:person] || params[:tag] %>
+        <h5 style="margin-bottom: 6px;"><a href="<%= @photo.user.page @photo %>"><%= @photo.user.username %>'s photostream</a></h5>
+      <% else %>
+        <%=
+          @item = @photo.user
+          erb :'partial/context_table', :layout => false
+        %>
+      <% end %>
+
       <% if @me == @user %>
       <table class="condensed-table photo-sizes">
         <% @photo.sizes.reverse.each do |s| %>
@@ -54,8 +63,15 @@
     <% if @people.count > 0 %>
     <div class="sidebar-widget">
       <h3>People</h3>
+      <%=
+        if params[:person]
+          @item = @people.get(params[:person])
+          erb :'partial/context_table', :layout => false
+        end
+      %>
+      <%= (params[:person] ? '<h5>Other People</h5>' : '' ) %>
       <ul>
-        <% @people.each do |person| %>
+        <% @people.each do |person| next if params[:person].to_i == person.id %>
           <li><a href="<%= person.page @photo %>"><%= person.realname %></a></li>
         <% end %>
       </ul>
@@ -65,8 +81,15 @@
     <% if @photosets.count > 0 %>
     <div class="sidebar-widget">
       <h3>Sets <a href="/<%= @user.username %>/sets" class="small-link">all sets</a></h3>
+      <%=
+        if params[:set]
+          @item = @photosets.get(params[:set])
+          erb :'partial/context_table', :layout => false
+        end
+      %>
+      <%= (params[:set] && @photosets.length > 1 ? '<h5>Other Sets</h5>' : '' ) %>
       <ul>
-        <% @photosets.each do |photoset| %>
+        <% @photosets.each do |photoset| next if params[:set].to_i == photoset.id %>
           <li><a href="<%= photoset.page @photo %>"><%= photoset.title %></a></li>
         <% end %>
       </ul>
@@ -76,8 +99,15 @@
     <% if @photo_tags.count > 0 %>
     <div class="sidebar-widget">
       <h3>Tags</h3>
+      <%=
+        if params[:tag] 
+          @item = @photo.tags.get(params[:tag])
+          erb :'partial/context_table', :layout => false
+        end
+      %>
+      <%= (params[:tag] && @photo_tags.length > 1 ? '<h5>Other Tags</h5>' : '' ) %>
       <ul class="tags">
-        <% @photo_tags.each do |tag| %>
+        <% @photo_tags.each do |tag| next if params[:tag].to_i == tag.id %>
           <li><a href="<%= tag.page @photo %>"><%= tag.name %></a></li>
         <% end %>
       </ul>

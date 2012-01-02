@@ -121,12 +121,20 @@ class Photo
   # Generate a URL-and-filesystem-safe filename given the photo title.
   # Remove trailing file extension, and remove all non-basic characters.
   def filename_from_title
-    self.title.sub(/\.(jpg|png|gif)$/i, '').gsub(/[^A-Za-z0-9_-]/, '-').gsub(/-+/, '-').sub(/-$/, '')[0,350]
+    Photo.filename_from_title self.title
+  end
+
+  def self.filename_from_title(title)
+    title.sub(/\.(jpg|png|gif)$/i, '').gsub(/[^A-Za-z0-9_-]/, '-').gsub(/-+/, '-').sub(/-$/, '')[0,350]
   end
 
   # Returns the relative link to this photo's page on this website
   def page(list=nil)
-    "/#{self.username}/photo/#{self.id}/#{self.filename_from_title}" + (list ? "?#{list.list_type}=#{list.id}" : "")
+    Photo.page self.username, self.id, self.filename_from_title, list
+  end
+
+  def self.page(username, id, title, list=nil)
+    "/#{username}/photo/#{id}/#{Photo.filename_from_title(title)}" + (list ? "?#{list.list_type}=#{list.id}" : "")
   end
 
   # Return attributes for width and height for inserting into an <img> tag

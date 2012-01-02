@@ -22,6 +22,10 @@ class User
 
   include FlickrArchivr::PhotoList
 
+  def display_name
+    self.username
+  end
+
   def get_sets(auth_user, page, per_page)
     if auth_user && auth_user.id == self.id
       self.photosets.all(:order => [:sequence.asc, :updated_date.desc, :created_date.desc, :id.desc]).page(page || 1, :per_page => per_page)
@@ -42,13 +46,27 @@ class User
     "/#{self.username}" + (photo.nil? ? "" : "?show=#{photo.id}")
   end
 
-  # Return the photo's sequence number given this ordering of photos
-  def row_for_photo(auth_user, photo_id)
+  # Return the next and previous n photos given this ordering
+  def get_context(auth_user, photo_id, num)
+    row_num = self.row_for_photo auth_user, photo_id
+    repository.adapter.select('
+      SELECT row_num, id, title, local_path_sq FROM (
+        SELECT (@row_num := @row_num + 1) AS row_num, id, title, local_path_sq
+        FROM (
+          SELECT photos.id, photos.date_uploaded, photos.title, local_path_sq
+          FROM `photos`
+          JOIN (SELECT @row_num := 0) r
+          WHERE `photos`.`user_id` = ?
+            ' + (auth_user && auth_user.id == self.id ? '' : 'AND `photos`.`public` = 1') + '
+          ORDER BY `photos`.`date_uploaded` DESC
+        ) AS photo_list
+      ) AS tmp
+      WHERE row_num >= ? - ? AND row_num <= ? + ?
+    ', self.id, row_num, num, row_num, num)
   end
 
-  # Return the page number the given photo appears on for this ordering of photos
-  def page_for_photo(auth_user, photo_id, per_page)
-    repository.adapter.select('SELECT page_num FROM (
+  def _order_photos(col, auth_user, photo_id, per_page)
+    repository.adapter.select('SELECT ' + col + ' FROM (
       SELECT (@row_num := @row_num + 1) AS row_num, FLOOR((@row_num-1) / ?) + 1 AS page_num, id
       FROM (
         SELECT photos.id, photos.date_uploaded
@@ -62,5 +80,4 @@ class User
     WHERE id = ?
     ', per_page, self.id, photo_id)[0]
   end
-
 end

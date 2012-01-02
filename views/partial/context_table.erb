@@ -1,0 +1,26 @@
+<h5 class="context"><a href="<%= @item.page %>"><%= @item.display_name + (@item.class == User ? "'s photostream" : '') %></a></h5>
+<table class="context-table">
+  <tr>
+  <% 
+    context = @item.get_context(@me, @photo.id, 4)
+    position = context.to_a.index {|a| @photo.id == a.id}
+    puts "Total items: #{context.length} Position: #{position}"
+    if context.length == 5
+      range = 0..4
+    elsif context.length == 6 && position == 1
+      range = 0..4
+    elsif context.length == 6 && position == 4
+      range = 1..5
+    else
+      range = 2..6
+    end
+    %>
+    <% context.to_a[range].each do |context| %>
+      <td<%= (context.id == @photo.id ? ' class="selected"' : '') %>>
+        <a href="<%= Photo.page(@user.username, context.id, context.title, (@item.class == User ? nil : @item)) %>">
+          <img src="<%= SiteConfig.photo_url_root + context.local_path_sq %>" width="50" height="50" />
+        </a>
+      </td>
+    <% end %>
+  </tr>
+</table>      

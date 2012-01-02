@@ -179,6 +179,37 @@ body {
 }
 
 /**
+ * Photo context
+ */
+.sidebar-widget h5 {
+  padding-bottom: 0;
+  margin-bottom: 0;
+  margin-top: 3px;
+  line-height: 18px;
+}
+.context-table td {
+  padding: 2px;
+  border: 0;
+}
+.context-table td a {
+  padding: 1px;
+  float: left;
+  border: 1px solid #DDDDDD;
+  border-radius: 2px 2px 2px 2px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+.context-table td.selected a {
+  border: 1px solid #777;
+  border-radius: 2px 2px 2px 2px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+.context-table td a img {
+  display: block;
+  border: none;  
+}
+
+
+/**
  * List of tags
  */
 .tags ul {

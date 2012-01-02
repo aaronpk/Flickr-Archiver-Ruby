@@ -15,6 +15,10 @@ class Place
 
   include FlickrArchivr::PhotoList
 
+  def display_name
+    self.name
+  end
+
   def list_type
     'place'
   end
@@ -43,7 +47,7 @@ class Place
         INNER JOIN `photo_places` ON `photos`.`id` = `photo_places`.`photo_id` 
         INNER JOIN `places` ON `photo_places`.`place_id` = `places`.`id`
         WHERE `photo_places`.`place_id` = ?
-          ' + (auth_user && auth_user.id == self.id ? '' : 'AND `photos`.`public` = 1') + '
+          ' + (auth_user && auth_user.id == self.user_id ? '' : 'AND `photos`.`public` = 1') + '
         GROUP BY `photos`.`id`
         ORDER BY `photos`.`date_uploaded` DESC
       ) AS photo_list
