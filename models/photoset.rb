@@ -63,7 +63,7 @@ class Photoset
     cover
   end
 
-  def page_for_photo(photo_id, per_page)
+  def page_for_photo(auth_user, photo_id, per_page)
     repository.adapter.select('SELECT page_num FROM (
       SELECT (@row_num := @row_num + 1) AS row_num, FLOOR((@row_num-1) / ?) + 1 AS page_num, id
       FROM (
@@ -73,6 +73,7 @@ class Photoset
         INNER JOIN `photo_photosets` ON `photos`.`id` = `photo_photosets`.`photo_id` 
         INNER JOIN `photosets` ON `photo_photosets`.`photoset_id` = `photosets`.`id`
         WHERE `photo_photosets`.`photoset_id` = ?
+          ' + (auth_user && auth_user.id == self.id ? '' : 'AND `photos`.`public` = 1') + '
         GROUP BY `photos`.`id`
         ORDER BY `photos`.`date_uploaded` DESC
       ) AS photo_list

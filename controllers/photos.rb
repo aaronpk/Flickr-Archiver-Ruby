@@ -25,7 +25,7 @@ get '/:username/?' do
   begin
     load_user params[:username]
     if params[:show]
-      params[:page] = @user.page_for_photo params[:show], per_page
+      params[:page] = @user.page_for_photo @me, params[:show], per_page
     end
     @photos = @user.get_photos @me, params[:page], per_page
     erb :'photos/index'
@@ -60,7 +60,7 @@ get '/:username/person/:id/?*' do
     @list.verify_permission! @user, @me
     @title = "Photos of #{@list.realname}"
     if params[:show]
-      params[:page] = @list.page_for_photo params[:show], per_page_small
+      params[:page] = @list.page_for_photo @me, params[:show], per_page_small
     end
     @photos = @list.get_photos @me, params[:page], per_page_small
     erb :'photos/list'
@@ -77,7 +77,7 @@ get '/:username/set/:id/?*' do
     @list.verify_permission! @user, @me
     @title = @list.title
     if params[:show]
-      params[:page] = @list.page_for_photo params[:show], per_page_small
+      params[:page] = @list.page_for_photo @me, params[:show], per_page_small
     end
     @photos = @list.get_photos @me, params[:page], per_page_small
     erb :'photos/list'
@@ -94,7 +94,7 @@ get '/:username/place/:id/?*' do
     @list.verify_permission! @user, @me
     @title = @list.name
     if params[:show]
-      params[:page] = @list.page_for_photo params[:show], per_page_small
+      params[:page] = @list.page_for_photo @me, params[:show], per_page_small
     end
     @photos = @list.get_photos @me, params[:page], per_page_small
     erb :'photos/list'
@@ -111,7 +111,7 @@ get '/:username/tag/:id/?*' do
     @list.verify_permission! @user, @me
     @title = @list.name
     if params[:show]
-      params[:page] = @list.page_for_photo params[:show], per_page_small
+      params[:page] = @list.page_for_photo @me, params[:show], per_page_small
     end
     @photos = @list.get_photos @me, params[:page], per_page_small
     erb :'photos/list'

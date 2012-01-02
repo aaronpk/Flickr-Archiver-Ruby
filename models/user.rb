@@ -42,7 +42,12 @@ class User
     "/#{self.username}" + (photo.nil? ? "" : "?show=#{photo.id}")
   end
 
-  def page_for_photo(photo_id, per_page)
+  # Return the photo's sequence number given this ordering of photos
+  def row_for_photo(auth_user, photo_id)
+  end
+
+  # Return the page number the given photo appears on for this ordering of photos
+  def page_for_photo(auth_user, photo_id, per_page)
     repository.adapter.select('SELECT page_num FROM (
       SELECT (@row_num := @row_num + 1) AS row_num, FLOOR((@row_num-1) / ?) + 1 AS page_num, id
       FROM (
@@ -50,6 +55,7 @@ class User
         FROM `photos`
         JOIN (SELECT @row_num := 0) r
         WHERE `photos`.`user_id` = ?
+          ' + (auth_user && auth_user.id == self.id ? '' : 'AND `photos`.`public` = 1') + '
         ORDER BY `photos`.`date_uploaded` DESC
       ) AS photo_list
     ) AS tmp

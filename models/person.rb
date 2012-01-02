@@ -34,7 +34,7 @@ class Person
     true
   end
 
-  def page_for_photo(photo_id, per_page)
+  def page_for_photo(auth_user, photo_id, per_page)
     repository.adapter.select('SELECT page_num FROM (
       SELECT (@row_num := @row_num + 1) AS row_num, FLOOR((@row_num-1) / ?) + 1 AS page_num, id
       FROM (
@@ -44,6 +44,7 @@ class Person
         INNER JOIN `person_photos` ON `photos`.`id` = `person_photos`.`photo_id` 
         INNER JOIN `people` ON `person_photos`.`person_id` = `people`.`id`
         WHERE `person_photos`.`person_id` = ?
+          ' + (auth_user && auth_user.id == self.id ? '' : 'AND `photos`.`public` = 1') + '
         GROUP BY `photos`.`id`
         ORDER BY `photos`.`date_uploaded` DESC
       ) AS photo_list
