@@ -193,6 +193,7 @@ class FlickrImport
         # Tags
         if flickrPhoto.tags
           photoTags = @flickr.tags.getListPhoto :photo_id => p.id
+          tag_ids = []
           photoTags.tags.tag.each do |photoTag|
             tag = Tag.first :tag => photoTag._content, :user => @user
             if tag.nil?
@@ -201,12 +202,24 @@ class FlickrImport
             photo.tags << tag
             tag.num = PhotoTag.count(:tag => tag) + 1
             tag.save
+            tag_ids << tag.id
+          end
+
+          # Delete any relationships for tags that were removed
+          if photo.id && tag_ids.length > 0
+            photo.tags.each do |t|
+              if !tag_ids.include?(t.id)
+                puts "Tag '#{t.name}' was removed"
+                photo.tags.delete(t)
+              end
+            end
           end
         end
 
         # Sets
         photoContexts = @flickr.photos.getAllContexts :photo_id => p.id
         if photoContexts && photoContexts.respond_to?('set')
+          set_ids = []
           photoContexts.set.each do |photoSet|
             set = Photoset.first :flickr_id => photoSet.id, :user => @user
             if set.nil?
@@ -217,24 +230,54 @@ class FlickrImport
             photo.photosets << set
             set.num = PhotoPhotoset.count(:photoset => set) + 1
             set.save
+            set_ids << set.id
+          end
+
+          # Delete any relationships for sets that were removed
+          if photo.id && set_ids.length > 0
+            photo.photosets.each do |s|
+              if !set_ids.include?(s.id)
+                puts "Set '#{s.title}' was removed"
+                photo.photosets.delete(s)
+              end
+            end
           end
         end
 
         # People
         if flickrPhoto.respond_to?('people') && flickrPhoto.people.respond_to?('haspeople') && flickrPhoto.people.haspeople
           photoPeople = @flickr.photos.people.getList :photo_id => p.id
+          people_ids = []
           photoPeople.person.each do |photoPerson|
             person = Person.first :nsid => photoPerson.nsid, :user => @user
             puts photoPerson.to_hash
             if person.nil?
               person = Person.create_from_flickr photoPerson, @user
             end
+            person.save
+            people_ids << person.id
             if photoPerson.respond_to?('w')
               PersonPhoto.first_or_create({:person => person, :photo => photo}, {:w => photoPerson.w, :h => photoPerson.h, :x => photoPerson.x, :y => photoPerson.y})
             else
               PersonPhoto.first_or_create :person => person, :photo => photo
             end
           end
+
+          # Delete any relationships for people that were removed
+          if photo.id && people_ids.length > 0
+            photo.people.each do |s|
+              if !people_ids.include?(s.id)
+                puts "Person '#{s.username}' was removed"
+                photo.people.delete(s)
+              end
+            end
+          end
+        end
+        if flickrPhoto.respond_to?('people') && flickrPhoto.people.respond_to?('haspeople') && flickrPhoto.people.haspeople == 0
+            photo.people.each do |s|
+              puts "Person '#{s.username}' was removed"
+              photo.people.delete(s)
+            end
         end
 
         # Places
