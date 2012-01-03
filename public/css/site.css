@@ -42,6 +42,11 @@ body {
   font-weight: normal;
 }
 
+.sidebar-widget.related .num {
+  color: #aaa;
+  font-size: 0.9em;
+}
+
 /**
  * Photo Privacy
  */
