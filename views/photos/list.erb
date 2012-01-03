@@ -35,9 +35,50 @@
   </div><!-- left col -->
   <div class="span4">
     
-    <div class="sidebar-widget">
-      <p><a href="">Hello</a></p>
-    </div>    
+    <% if @related_sets.length > 0 %>
+      <div class="sidebar-widget">
+        <h3><%= @related_titles[:sets] %></h3>
+        <ul>
+          <% @related_sets.each do |link| next if !link.photoset %>
+            <li><a href="<%= link.photoset.page %>"><%= link.photoset.display_name %></a></li>
+          <% end %>
+        </ul>
+      </div>    
+    <% end %>
+
+    <% if @related_people.length > 0 %>
+      <div class="sidebar-widget">
+        <h3><%= @related_titles[:people] %></h3>
+        <ul>
+          <% @related_people.each do |link| next if !link.person %>
+            <li><a href="<%= link.person.page %>"><%= link.person.display_name %></a></li>
+          <% end %>
+        </ul>
+      </div>    
+    <% end %>
+
+    <% if @related_tags.length > 0 %>
+      <div class="sidebar-widget">
+        <h3><%= @related_titles[:tags] %></h3>
+        <ul>
+          <% @related_tags.each do |link| next if !link.tag %>
+            <li><a href="<%= link.tag.page %>"><%= link.tag.display_name %></a></li>
+          <% end %>
+        </ul>
+      </div>    
+    <% end %>
+
+    <% if @related_places.length > 0 %>
+      <div class="sidebar-widget">
+        <h3><%= @related_titles[:places] %></h3>
+        <ul>
+          <% @related_places.each do |link| next if !link.place %>
+            <li><a href="<%= link.place.page %>"><%= link.place.display_name %></a></li>
+          <% end %>
+        </ul>
+      </div>    
+    <% end %>
+
 
   </div><!-- right col-->
 

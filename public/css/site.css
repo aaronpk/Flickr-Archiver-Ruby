@@ -17,6 +17,7 @@ body {
 
 .sidebar-widget h3 {
   border-bottom: 1px #c8c8c8 solid;
+  line-height: 1.3em;
 }
 
 .sidebar-widget ul {

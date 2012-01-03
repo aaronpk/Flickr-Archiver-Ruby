@@ -8,7 +8,7 @@ class Tag
   property :num, Integer, :default => 0
   property :created_at, DateTime
   property :updated_at, DateTime
-  has n, :photos, :through => Resource
+  has n, :photos, :through => :photo_tag
 
   include FlickrArchivr::PhotoList
 
