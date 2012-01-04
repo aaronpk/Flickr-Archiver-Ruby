@@ -79,6 +79,17 @@
       </div>    
     <% end %>
 
+    <div class="sidebar-widget related">
+      <h3>Dates</h3>
+      <ul>
+        <% @related_dates[:years].each do |year| %>
+          <li><a href="/<%= @user.username %>/<%= year %>"><%= year %></li>
+        <% end %>
+        <% @related_dates[:months].each do |month| %>
+          <li><a href="<%= "/%{@user.username}/%{month[:year]}/%{month[:month]}" %>"><%= DateTime.new(month[:year], month[:month], 1).strftime("%B %Y") %></li>
+        <% end %>
+      </ul>
+    </div>
 
   </div><!-- right col-->
 

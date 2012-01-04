@@ -283,6 +283,8 @@ class Photo
       ORDER BY year DESC, month DESC, day DESC
     ')
     puts years
-    false
+    puts months
+    puts days
+    {:years => years, :months => months, :days => days}
   end
 end
