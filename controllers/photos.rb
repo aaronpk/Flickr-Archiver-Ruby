@@ -25,6 +25,8 @@ end
 get '/:username/?' do
   begin
     load_user params[:username]
+    @list = @user
+    @title = "#{@user.username}'s Photostream"
     if params[:show]
       params[:page] = @user.page_for_photo @me, params[:show], per_page_small
     end
@@ -32,7 +34,14 @@ get '/:username/?' do
 
     load_related_photos
 
-    erb :'photos/index'
+    @related_titles = {
+      :people => 'People in these photos',
+      :sets => 'Sets in these photos',
+      :tags => 'Tags in these photos',
+      :places => 'Places in these photos'
+    }
+
+    erb :'photos/list'
   rescue FlickrArchivr::Error => e
     erb :"#{e.erb_template}"
   end
