@@ -47,6 +47,86 @@ get '/:username/?' do
   end
 end
 
+get %r{/([a-z]+)/([0-9]{4})/([0-9]{2})/([0-9]{2})} do |username, year, month, day|
+  begin
+    load_user username
+    @list = @user
+    date = DateTime.parse("#{year}-#{month}-#{day}").strftime "%B %e, %Y"
+    @title = "Photos from #{date}"
+    puts @title
+    @photos = @user.get_photos_for_date @me, params[:page], per_page_small, year, month, day
+    @photos = [] if !@photos
+
+    if @photos.length > 0
+      load_related_photos
+
+      @related_titles = {
+        :people => 'People in these photos',
+        :sets => 'Sets in these photos',
+        :tags => 'Tags in these photos',
+        :places => 'Places in these photos'
+      }
+    end
+
+    erb :'photos/list'
+  rescue FlickrArchivr::Error => e
+    erb :"#{e.erb_template}"
+  end
+end
+
+get %r{/([a-z]+)/([0-9]{4})/([0-9]{2})} do |username, year, month|
+  begin
+    load_user username
+    @list = @user
+    date = DateTime.parse("#{year}-#{month}-01").strftime "%B %Y"
+    @title = "Photos from #{date}"
+    puts @title
+    @photos = @user.get_photos_for_date @me, params[:page], per_page_small, year, month
+    @photos = [] if !@photos
+
+    if @photos.length > 0
+      load_related_photos
+
+      @related_titles = {
+        :people => 'People in these photos',
+        :sets => 'Sets in these photos',
+        :tags => 'Tags in these photos',
+        :places => 'Places in these photos'
+      }
+    end
+
+    erb :'photos/list'
+  rescue FlickrArchivr::Error => e
+    erb :"#{e.erb_template}"
+  end
+end
+
+get %r{/([a-z]+)/([0-9]{4})} do |username, year|
+  begin
+    load_user username
+    @list = @user
+    @title = "Photos from #{year}"
+    puts @title
+    @photos = @user.get_photos_for_date @me, params[:page], per_page_small, year
+    @photos = [] if !@photos
+
+    if @photos.length > 0
+      load_related_photos
+
+      @related_titles = {
+        :people => 'People in these photos',
+        :sets => 'Sets in these photos',
+        :tags => 'Tags in these photos',
+        :places => 'Places in these photos'
+      }
+    end
+
+    erb :'photos/list'
+  rescue FlickrArchivr::Error => e
+    erb :"#{e.erb_template}"
+  end
+end
+
 get '/:username/person/:id/?*' do
   begin
     load_user params[:username]
@@ -200,6 +280,7 @@ def load_related_photos
   @related_tags = PhotoTag.all(:photo_id => @photo_ids, :fields => [:tag_id], :unique => true).to_a.reject{|a| a.tag.nil?}.sort_by!{|a| -a.tag.num}
   @related_people = PersonPhoto.all(:photo_id => @photo_ids, :fields => [:person_id], :unique => true).to_a.reject{|a| a.person.nil?}.sort_by! {|a| -a.person.num}
   @related_places = PhotoPlace.all(:photo_id => @photo_ids, :fields => [:place_id], :unique => true).to_a.reject{|a| a.place.nil?}.sort_by! {|a| -a.place.num}
+  @related_dates = Photo.dates_for_photos @photo_ids
   true
 end
 

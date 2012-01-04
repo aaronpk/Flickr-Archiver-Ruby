@@ -35,7 +35,7 @@
   </div><!-- left col -->
   <div class="span4">
     
-    <% if @related_sets.length > 0 %>
+    <% if @related_sets && @related_sets.length > 0 %>
       <div class="sidebar-widget related">
         <h3><%= @related_titles[:sets] %></h3>
         <ul>
@@ -46,7 +46,7 @@
       </div>    
     <% end %>
 
-    <% if @related_people.length > 0 %>
+    <% if @related_people && @related_people.length > 0 %>
       <div class="sidebar-widget related">
         <h3><%= @related_titles[:people] %></h3>
         <ul>
@@ -57,7 +57,7 @@
       </div>    
     <% end %>
 
-    <% if @related_tags.length > 0 %>
+    <% if @related_tags && @related_tags.length > 0 %>
       <div class="sidebar-widget related">
         <h3><%= @related_titles[:tags] %></h3>
         <ul>
@@ -68,7 +68,7 @@
       </div>    
     <% end %>
 
-    <% if @related_places.length > 0 %>
+    <% if @related_places && @related_places.length > 0 %>
       <div class="sidebar-widget related">
         <h3><%= @related_titles[:places] %></h3>
         <ul>

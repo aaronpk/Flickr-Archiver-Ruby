@@ -260,4 +260,29 @@ class Photo
     self.raw = obj.to_hash.to_json
   end
 
+  def self.dates_for_photos(photo_ids)
+    years = repository.adapter.select('
+      SELECT YEAR(date_taken) AS year
+      FROM photos
+      WHERE id IN (' + photo_ids.join(',') + ')
+      GROUP BY year
+      ORDER BY year DESC
+    ')
+    months = repository.adapter.select('
+      SELECT YEAR(date_taken) AS year, MONTH(date_taken) AS month
+      FROM photos
+      WHERE id IN (' + photo_ids.join(',') + ')
+      GROUP BY year, month
+      ORDER BY year DESC, month DESC
+    ')
+    days = repository.adapter.select('
+      SELECT YEAR(date_taken) AS year, MONTH(date_taken) AS month, DAY(date_taken) AS day
+      FROM photos
+      WHERE id IN (' + photo_ids.join(',') + ')
+      GROUP BY year, month, day
+      ORDER BY year DESC, month DESC, day DESC
+    ')
+    puts years
+    false
+  end
 end
