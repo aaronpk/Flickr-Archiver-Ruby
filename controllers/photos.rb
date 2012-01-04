@@ -1,39 +1,6 @@
-def load_user(username)
-  @user = User.first :username => username
-  raise FlickrArchivr::NotFoundError.new if @user.nil?
-end
 
-def per_page
-  9 * 4
-end
-
-def per_page_small
-  6 * 4
-end
-
-get '/:username/test/:id' do
-  begin
-    load_user params[:username]
-    puts params
-    'TESTING'
-  rescue FlickrArchivr::Error => e
-    erb :"#{e.erb_template}"
-  end
-end
-
-get '/:username/?' do
-  begin
-    load_user params[:username]
-    if params[:show]
-      params[:page] = @user.page_for_photo @me, params[:show], per_page
-    end
-    @photos = @user.get_photos @me, params[:page], per_page
-    erb :'photos/index'
-  rescue FlickrArchivr::Error => e
-    erb :"#{e.erb_template}"
-  end
-end
-
+################################################################
+## Photo detail page
 get '/:username/photo/:id/?*' do
   begin
     load_user params[:username]
@@ -52,6 +19,25 @@ get '/:username/photo/:id/?*' do
   end
 end
 
+################################################################
+## Photo lists (user, person, tag, place, set)
+
+get '/:username/?' do
+  begin
+    load_user params[:username]
+    if params[:show]
+      params[:page] = @user.page_for_photo @me, params[:show], per_page_small
+    end
+    @photos = @user.get_photos @me, params[:page], per_page_small
+
+    load_related_photos
+
+    erb :'photos/index'
+  rescue FlickrArchivr::Error => e
+    erb :"#{e.erb_template}"
+  end
+end
+
 get '/:username/person/:id/?*' do
   begin
     load_user params[:username]
@@ -63,12 +49,8 @@ get '/:username/person/:id/?*' do
       params[:page] = @list.page_for_photo @me, params[:show], per_page_small
     end
     @photos = @list.get_photos @me, params[:page], per_page_small
-    @photo_ids = @photos.collect {|p| p.id}
 
-    @related_sets = PhotoPhotoset.all(:photo_id => @photo_ids, :fields => [:photoset_id], :unique => true)
-    @related_tags = PhotoTag.all(:photo_id => @photo_ids, :fields => [:tag_id], :unique => true)
-    @related_people = PersonPhoto.all(:photo_id => @photo_ids, :fields => [:person_id], :unique => true)
-    @related_places = PhotoPlace.all(:photo_id => @photo_ids, :fields => [:place_id], :unique => true)
+    load_related_photos
 
     @related_titles = {
       :people => 'Related people',
@@ -94,12 +76,8 @@ get '/:username/set/:id/?*' do
       params[:page] = @list.page_for_photo @me, params[:show], per_page_small
     end
     @photos = @list.get_photos @me, params[:page], per_page_small
-    @photo_ids = @photos.collect {|p| p.id}
 
-    @related_sets = PhotoPhotoset.all(:photo_id => @photo_ids, :fields => [:photoset_id], :unique => true)
-    @related_tags = PhotoTag.all(:photo_id => @photo_ids, :fields => [:tag_id], :unique => true)
-    @related_people = PersonPhoto.all(:photo_id => @photo_ids, :fields => [:person_id], :unique => true)
-    @related_places = PhotoPlace.all(:photo_id => @photo_ids, :fields => [:place_id], :unique => true)
+    load_related_photos
 
     @related_titles = {
       :people => 'People in this set',
@@ -125,12 +103,8 @@ get '/:username/place/:id/?*' do
       params[:page] = @list.page_for_photo @me, params[:show], per_page_small
     end
     @photos = @list.get_photos @me, params[:page], per_page_small
-    @photo_ids = @photos.collect {|p| p.id}
 
-    @related_sets = PhotoPhotoset.all(:photo_id => @photo_ids, :fields => [:photoset_id], :unique => true)
-    @related_tags = PhotoTag.all(:photo_id => @photo_ids, :fields => [:tag_id], :unique => true)
-    @related_people = PersonPhoto.all(:photo_id => @photo_ids, :fields => [:person_id], :unique => true)
-    @related_places = PhotoPlace.all(:photo_id => @photo_ids, :fields => [:place_id], :unique => true)
+    load_related_photos
 
     @related_titles = {
       :people => 'People at this place',
@@ -156,12 +130,8 @@ get '/:username/tag/:id/?*' do
       params[:page] = @list.page_for_photo @me, params[:show], per_page_small
     end
     @photos = @list.get_photos @me, params[:page], per_page_small
-    @photo_ids = @photos.collect {|p| p.id}
 
-    @related_sets = PhotoPhotoset.all(:photo_id => @photo_ids, :fields => [:photoset_id], :unique => true)
-    @related_tags = PhotoTag.all(:photo_id => @photo_ids, :fields => [:tag_id], :unique => true)
-    @related_people = PersonPhoto.all(:photo_id => @photo_ids, :fields => [:person_id], :unique => true)
-    @related_places = PhotoPlace.all(:photo_id => @photo_ids, :fields => [:place_id], :unique => true)
+    load_related_photos
 
     @related_titles = {
       :people => 'People with this tag',
@@ -175,6 +145,9 @@ get '/:username/tag/:id/?*' do
     erb :"#{e.erb_template}"
   end
 end
+
+################################################################
+## List of sets, tags, people
 
 get '/:username/sets/?' do
   begin
@@ -209,6 +182,41 @@ get '/:username/people/?' do
   end
 end
 
+################################################################
+## Helper methods
+
+def load_related_photos
+  @photo_ids = @photos.collect {|p| p.id}
+  @related_sets = PhotoPhotoset.all(:photo_id => @photo_ids, :fields => [:photoset_id], :unique => true)
+  @related_tags = PhotoTag.all(:photo_id => @photo_ids, :fields => [:tag_id], :unique => true)
+  @related_people = PersonPhoto.all(:photo_id => @photo_ids, :fields => [:person_id], :unique => true)
+  @related_places = PhotoPlace.all(:photo_id => @photo_ids, :fields => [:place_id], :unique => true)
+  true
+end
+
 def format_text(text) 
   text.gsub(/\n/, '<br />')
+end
+
+def load_user(username)
+  @user = User.first :username => username
+  raise FlickrArchivr::NotFoundError.new if @user.nil?
+end
+
+def per_page
+  9 * 4
+end
+
+def per_page_small
+  6 * 4
+end
+
+get '/:username/test/:id' do
+  begin
+    load_user params[:username]
+    puts params
+    'TESTING'
+  rescue FlickrArchivr::Error => e
+    erb :"#{e.erb_template}"
+  end
 end
