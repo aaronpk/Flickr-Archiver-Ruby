@@ -10,7 +10,7 @@
     <% if SiteConfig.ga_id %>
       <script type="text/javascript">
         var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', '<%= GA_ID %>']);
+        _gaq.push(['_setAccount', '<%= SiteConfig.ga_id %>']);
         _gaq.push(['_trackPageview']);
 
         (function() {
