@@ -6,6 +6,21 @@ body {
   margin-bottom: 10px;
 }
 
+.footer {
+  background-color: #EEE;
+  padding: 30px 0;
+  text-shadow: 0 1px 0 white;
+  border-top: 1px solid #E5E5E5;
+}
+.footer .container {
+  color: #777;
+  font-size: 9pt;
+}
+.footer a {
+  text-decoration: underline;
+  color: #666;
+}
+
 /**
  * Sidebar
  */

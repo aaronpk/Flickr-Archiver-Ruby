@@ -26,26 +26,15 @@ get '/?' do
   end
 end
 
+get '/about/?' do
+  erb :about
+end
+
 get '/:username/search' do
   erb :search
 end
 
-post '/:username/search' do 
+post '/:username/search' do
+  #@search_sets = Photoset.all(:user_id => @user.id, )
   erb :search
-end
-
-get '/me' do
-  puts "##############"
-  puts session
-  puts @me
-  puts "##############"
-  # begin
-  #   login = @flickr.test.login
-  #   puts "You are authenticated as #{login.username}"
-  #   @username = login.username
-  #   erb :me
-  # rescue FlickRaw::FailedResponse => e
-  #   puts "Authentication Failed : #{e.msg}"
-  #   redirect '/'
-  # end
 end
