@@ -32,12 +32,18 @@
       # Retrieve the user or create a new user account
       user = User.first :username => login.username
       if user.nil?
-        user = User.new :username => login.username, :nsid => login.id, :access_token => @flickr.access_token, :access_secret => @flickr.access_secret
-        user.save
+        if SiteConfig.allow_create_users
+          user = User.new :username => login.username, :nsid => login.id, :access_token => @flickr.access_token, :access_secret => @flickr.access_secret
+          user.save
+          session[:user_id] = user.id
+          redirect '/' + user.username
+        else
+          redirect '/no-login'
+        end
+      else
+        session[:user_id] = user.id
+        redirect '/' + user.username
       end
-      session[:user_id] = user.id
-
-      redirect '/' + user.username
     rescue FlickRaw::FailedResponse => e
       puts "Authentication Failed : #{e.msg}"
       redirect '/auth/flickr/error'
@@ -50,3 +56,6 @@
     erb :error
   end
 
+  get '/no-login' do
+    erb :'error/no-login'
+  end

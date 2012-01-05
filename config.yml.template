@@ -5,6 +5,7 @@ development:
   ga_id:
   photo_root: /Users/you/Pictures/Flickr/
   photo_url_root: /images/
+  allow_create_users: true
 production:
   database: "mysql://flickr:archivr@localhost/flickrarchivr"
   flickr_consumer_key:
@@ -12,3 +13,4 @@ production:
   ga_id:
   photo_root: /Users/you/Pictures/Flickr/
   photo_url_root: /images/
+  allow_create_users: true
