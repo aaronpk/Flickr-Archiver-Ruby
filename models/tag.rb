@@ -73,7 +73,7 @@ class Tag
 
   def get_all_dates
     years = repository.adapter.select('
-      SELECT YEAR(date_taken) AS year
+      SELECT YEAR(date_taken) AS year, COUNT(1) AS num
       FROM photos
       JOIN photo_tags lk ON photos.id = lk.photo_id
       WHERE lk.tag_id = ?
@@ -81,7 +81,7 @@ class Tag
       ORDER BY year DESC
     ', self.id)
     months = repository.adapter.select('
-      SELECT YEAR(date_taken) AS year, MONTH(date_taken) AS month
+      SELECT YEAR(date_taken) AS year, MONTH(date_taken) AS month, COUNT(1) AS num
       FROM photos
       JOIN photo_tags lk ON photos.id = lk.photo_id
       WHERE lk.tag_id = ?

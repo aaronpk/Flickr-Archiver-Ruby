@@ -95,12 +95,34 @@ class User
     days = []
 
     if year && month && day
-      years = [year]
-      months = [{:year => year.to_i, :month => month.to_i}]
+      years = repository.adapter.select('
+        SELECT YEAR(date_taken) AS year, COUNT(1) AS num
+        FROM photos
+        WHERE user_id = ?
+          AND YEAR(date_taken) = ?
+        GROUP BY year
+        ORDER BY year DESC
+      ', self.id, year)
+      months = repository.adapter.select('
+        SELECT YEAR(date_taken) AS year, MONTH(date_taken) AS month, COUNT(1) AS num
+        FROM photos
+        WHERE user_id = ?
+          AND YEAR(date_taken) = ?
+          AND MONTH(date_taken) = ?
+        GROUP BY year, month
+        ORDER BY year DESC, month DESC
+      ', self.id, year, month)
     elsif year && month 
-      years = [year]
+      years = repository.adapter.select('
+        SELECT YEAR(date_taken) AS year, COUNT(1) AS num
+        FROM photos
+        WHERE user_id = ?
+          AND YEAR(date_taken) = ?
+        GROUP BY year
+        ORDER BY year DESC
+      ', self.id, year)
       days = repository.adapter.select('
-        SELECT YEAR(date_taken) AS year, MONTH(date_taken) AS month, DAY(date_taken) AS day
+        SELECT YEAR(date_taken) AS year, MONTH(date_taken) AS month, DAY(date_taken) AS day, COUNT(1) AS num
         FROM photos
         WHERE user_id = ?
           AND YEAR(date_taken) = ?
@@ -109,9 +131,16 @@ class User
         ORDER BY year DESC, month DESC, day DESC
       ', self.id, year, month)
     else
-      years = [year]
+      years = repository.adapter.select('
+        SELECT YEAR(date_taken) AS year, COUNT(1) AS num
+        FROM photos
+        WHERE user_id = ?
+          AND YEAR(date_taken) = ?
+        GROUP BY year
+        ORDER BY year DESC
+      ', self.id, year)
       months = repository.adapter.select('
-        SELECT YEAR(date_taken) AS year, MONTH(date_taken) AS month
+        SELECT YEAR(date_taken) AS year, MONTH(date_taken) AS month, COUNT(1) AS num
         FROM photos
         WHERE user_id = ?
           AND YEAR(date_taken) = ?

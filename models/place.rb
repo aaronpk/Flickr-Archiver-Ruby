@@ -58,7 +58,7 @@ class Place
 
   def get_all_dates
     years = repository.adapter.select('
-      SELECT YEAR(date_taken) AS year
+      SELECT YEAR(date_taken) AS year, COUNT(1) AS num
       FROM photos
       JOIN photo_places lk ON photos.id = lk.photo_id
       WHERE lk.place_id = ?
@@ -66,7 +66,7 @@ class Place
       ORDER BY year DESC
     ', self.id)
     months = repository.adapter.select('
-      SELECT YEAR(date_taken) AS year, MONTH(date_taken) AS month
+      SELECT YEAR(date_taken) AS year, MONTH(date_taken) AS month, COUNT(1) AS num
       FROM photos
       JOIN photo_places lk ON photos.id = lk.photo_id
       WHERE lk.place_id = ?
