@@ -56,6 +56,35 @@ class Place
     ', per_page, self.id, photo_id)[0]
   end
 
+  def get_all_dates
+    years = repository.adapter.select('
+      SELECT YEAR(date_taken) AS year
+      FROM photos
+      JOIN photo_places lk ON photos.id = lk.photo_id
+      WHERE lk.place_id = ?
+      GROUP BY year
+      ORDER BY year DESC
+    ', self.id)
+    months = repository.adapter.select('
+      SELECT YEAR(date_taken) AS year, MONTH(date_taken) AS month
+      FROM photos
+      JOIN photo_places lk ON photos.id = lk.photo_id
+      WHERE lk.place_id = ?
+      GROUP BY year, month
+      ORDER BY year DESC, month DESC
+    ', self.id)
+    days = []
+    # days = repository.adapter.select('
+    #   SELECT YEAR(date_taken) AS year, MONTH(date_taken) AS month, DAY(date_taken) AS day
+    #   FROM photos
+    #   JOIN photo_places lk ON photos.id = lk.photo_id
+    #   WHERE lk.place_id = ?
+    #   GROUP BY year, month, day
+    #   ORDER BY year DESC, month DESC, day DESC
+    # ', self.id)
+    {:years => years, :months => months, :days => days}
+  end
+
   def self.create_from_flickr(type, obj, user)
     place = Place.new
     place.user = user

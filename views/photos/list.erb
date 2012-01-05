@@ -79,17 +79,22 @@
       </div>    
     <% end %>
 
-    <div class="sidebar-widget related">
-      <h3>Dates</h3>
-      <ul>
-        <% @related_dates[:years].each do |year| %>
-          <li><a href="/<%= @user.username %>/<%= year %>"><%= year %></li>
-        <% end %>
-        <% @related_dates[:months].each do |month| %>
-          <li><a href="<%= "/%{@user.username}/%{month[:year]}/%{month[:month]}" %>"><%= DateTime.new(month[:year], month[:month], 1).strftime("%B %Y") %></li>
-        <% end %>
-      </ul>
-    </div>
+    <% if @related_dates %>
+      <div class="sidebar-widget related">
+        <h3>Dates</h3>
+        <ul>
+          <% @related_dates[:years].each do |year| %>
+            <li><a href="<%= "/#{@user.username}/#{year}" %>"><%= year %></a></li>
+          <% end %>
+          <% @related_dates[:months].each do |month| date = DateTime.new(month[:year], month[:month], 1) %>
+            <li><a href="<%= "/#{@user.username}/#{date.strftime "%Y/%m"}" %>"><%= date.strftime("%B %Y") %></a></li>
+          <% end %>
+          <% @related_dates[:days].each do |day| date = DateTime.new(day[:year], day[:month], day[:day]) %>
+            <li><a href="<%= "/#{@user.username}/#{date.strftime "%Y/%m/%d"}" %>"><%= date.strftime("%B %e") %></a></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
 
   </div><!-- right col-->
 

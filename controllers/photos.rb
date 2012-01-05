@@ -47,7 +47,7 @@ get '/:username/?' do
   end
 end
 
-get %r{/([a-z]+)/([0-9]{4})/([0-9]{2})/([0-9]{2})} do |username, year, month, day|
+get %r{/([a-z]+)/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})} do |username, year, month, day|
   begin
     load_user username
     @list = @user
@@ -59,6 +59,7 @@ get %r{/([a-z]+)/([0-9]{4})/([0-9]{2})/([0-9]{2})} do |username, year, month, da
 
     if @photos.length > 0
       load_related_photos
+      @related_dates = @list.get_related_dates year, month, day
 
       @related_titles = {
         :people => 'People in these photos',
@@ -74,7 +75,7 @@ get %r{/([a-z]+)/([0-9]{4})/([0-9]{2})/([0-9]{2})} do |username, year, month, da
   end
 end
 
-get %r{/([a-z]+)/([0-9]{4})/([0-9]{2})} do |username, year, month|
+get %r{/([a-z]+)/([0-9]{4})/([0-9]{1,2})} do |username, year, month|
   begin
     load_user username
     @list = @user
@@ -86,6 +87,7 @@ get %r{/([a-z]+)/([0-9]{4})/([0-9]{2})} do |username, year, month|
 
     if @photos.length > 0
       load_related_photos
+      @related_dates = @list.get_related_dates year, month
 
       @related_titles = {
         :people => 'People in these photos',
@@ -112,6 +114,7 @@ get %r{/([a-z]+)/([0-9]{4})} do |username, year|
 
     if @photos.length > 0
       load_related_photos
+      @related_dates = @list.get_related_dates year
 
       @related_titles = {
         :people => 'People in these photos',
@@ -140,6 +143,7 @@ get '/:username/person/:id/?*' do
     @photos = @list.get_photos @me, params[:page], per_page_small
 
     load_related_photos
+    @related_dates = @list.get_all_dates
 
     @related_titles = {
       :people => 'Related people',
@@ -167,6 +171,7 @@ get '/:username/set/:id/?*' do
     @photos = @list.get_photos @me, params[:page], per_page_small
 
     load_related_photos
+    @related_dates = @list.get_all_dates
 
     @related_titles = {
       :people => 'People in this set',
@@ -194,6 +199,7 @@ get '/:username/place/:id/?*' do
     @photos = @list.get_photos @me, params[:page], per_page_small
 
     load_related_photos
+    @related_dates = @list.get_all_dates
 
     @related_titles = {
       :people => 'People at this place',
@@ -221,6 +227,7 @@ get '/:username/tag/:id/?*' do
     @photos = @list.get_photos @me, params[:page], per_page_small
 
     load_related_photos
+    @related_dates = @list.get_all_dates
 
     @related_titles = {
       :people => 'People with this tag',
@@ -280,7 +287,6 @@ def load_related_photos
   @related_tags = PhotoTag.all(:photo_id => @photo_ids, :fields => [:tag_id], :unique => true).to_a.reject{|a| a.tag.nil?}.sort_by!{|a| -a.tag.num}
   @related_people = PersonPhoto.all(:photo_id => @photo_ids, :fields => [:person_id], :unique => true).to_a.reject{|a| a.person.nil?}.sort_by! {|a| -a.person.num}
   @related_places = PhotoPlace.all(:photo_id => @photo_ids, :fields => [:place_id], :unique => true).to_a.reject{|a| a.place.nil?}.sort_by! {|a| -a.place.num}
-  @related_dates = Photo.dates_for_photos @photo_ids
   true
 end
 

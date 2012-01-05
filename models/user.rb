@@ -88,4 +88,38 @@ class User
     WHERE id = ?
     ', per_page, self.id, photo_id)[0]
   end
+
+  def get_related_dates(year, month=nil, day=nil)
+    years = []
+    months = []
+    days = []
+
+    if year && month && day
+      years = [year]
+      months = [{:year => year.to_i, :month => month.to_i}]
+    elsif year && month 
+      years = [year]
+      days = repository.adapter.select('
+        SELECT YEAR(date_taken) AS year, MONTH(date_taken) AS month, DAY(date_taken) AS day
+        FROM photos
+        WHERE user_id = ?
+          AND YEAR(date_taken) = ?
+          AND MONTH(date_taken) = ?
+        GROUP BY year, month, day
+        ORDER BY year DESC, month DESC, day DESC
+      ', self.id, year, month)
+    else
+      years = [year]
+      months = repository.adapter.select('
+        SELECT YEAR(date_taken) AS year, MONTH(date_taken) AS month
+        FROM photos
+        WHERE user_id = ?
+          AND YEAR(date_taken) = ?
+        GROUP BY year, month
+        ORDER BY year DESC, month DESC
+      ', self.id, year)
+    end
+    {:years => years, :months => months, :days => days}
+  end
+
 end
