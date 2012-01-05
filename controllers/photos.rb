@@ -283,10 +283,14 @@ end
 
 def load_related_photos
   @photo_ids = @photos.collect {|p| p.id}
-  @related_sets = PhotoPhotoset.all(:photo_id => @photo_ids, :fields => [:photoset_id], :unique => true).to_a.reject{|a| a.photoset.nil?}.sort_by!{|a| -a.photoset.num}
-  @related_tags = PhotoTag.all(:photo_id => @photo_ids, :fields => [:tag_id], :unique => true).to_a.reject{|a| a.tag.nil?}.sort_by!{|a| -a.tag.num}
-  @related_people = PersonPhoto.all(:photo_id => @photo_ids, :fields => [:person_id], :unique => true).to_a.reject{|a| a.person.nil?}.sort_by! {|a| -a.person.num}
-  @related_places = PhotoPlace.all(:photo_id => @photo_ids, :fields => [:place_id], :unique => true).to_a.reject{|a| a.place.nil?}.sort_by! {|a| -a.place.num}
+  @related_sets = Photoset.all(Photoset.photos.id => @photo_ids, :order => :num.desc)
+  @related_tags = Tag.all(Tag.photos.id => @photo_ids, :order => :num.desc)
+  @related_people = Person.all(Person.photos.id => @photo_ids, :order => :num.desc)
+  @related_places = Place.all(Place.photos.id => @photo_ids, :order => :num.desc)
+  # @related_sets = PhotoPhotoset.all(:photo_id => @photo_ids, :fields => [:photoset_id], :unique => true).to_a.reject{|a| a.photoset.nil?}.sort_by!{|a| -a.photoset.num}
+  # @related_tags = PhotoTag.all(:photo_id => @photo_ids, :fields => [:tag_id], :unique => true).to_a.reject{|a| a.tag.nil?}.sort_by!{|a| -a.tag.num}
+  # @related_people = PersonPhoto.all(:photo_id => @photo_ids, :fields => [:person_id], :unique => true).to_a.reject{|a| a.person.nil?}.sort_by! {|a| -a.person.num}
+  # @related_places = PhotoPlace.all(:photo_id => @photo_ids, :fields => [:place_id], :unique => true).to_a.reject{|a| a.place.nil?}.sort_by! {|a| -a.place.num}
   true
 end
 
