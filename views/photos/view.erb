@@ -14,7 +14,11 @@
 
     <div class="sidebar-widget">
       <p><a href="<%= @photo.url %>">View original on Flickr</a></p>
-      <p>Taken on <%= @photo.date_taken.strftime "%B %e, %Y" %>
+      <p>Taken on 
+        <a href="/<%= @photo.user.username %>/<%= @photo.date_taken.strftime "%Y/%m" %>"><%= @photo.date_taken.strftime "%B" %></a>
+        <a href="/<%= @photo.user.username %>/<%= @photo.date_taken.strftime "%Y/%m/%d" %>"><%= @photo.date_taken.strftime "%e" %></a>,
+        <a href="/<%= @photo.user.username %>/<%= @photo.date_taken.strftime "%Y" %>"><%= @photo.date_taken.strftime "%Y" %></a>
+      </p>
     </div>
 
     <% if @has_location %>
