@@ -57,17 +57,6 @@
       </div>    
     <% end %>
 
-    <% if @related_tags && @related_tags.length > 0 %>
-      <div class="sidebar-widget related">
-        <h3><%= @related_titles[:tags] %></h3>
-        <ul>
-          <% @related_tags.each do |link| next if !link.tag %>
-            <li><a href="<%= link.tag.page %>"><%= link.tag.display_name %></a> <span class="num">(<%= link.tag.num %>)</span></li>
-          <% end %>
-        </ul>
-      </div>    
-    <% end %>
-
     <% if @related_places && @related_places.length > 0 %>
       <div class="sidebar-widget related">
         <h3><%= @related_titles[:places] %></h3>
@@ -94,6 +83,17 @@
           <% end %>
         </ul>
       </div>
+    <% end %>
+
+    <% if @related_tags && @related_tags.length > 0 %>
+      <div class="sidebar-widget related">
+        <h3><%= @related_titles[:tags] %></h3>
+        <ul>
+          <% @related_tags.each do |link| next if !link.tag %>
+            <li><a href="<%= link.tag.page %>"><%= link.tag.display_name %></a> <span class="num">(<%= link.tag.num %>)</span></li>
+          <% end %>
+        </ul>
+      </div>    
     <% end %>
 
   </div><!-- right col-->
