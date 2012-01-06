@@ -47,7 +47,7 @@ get '/:username/?' do
   end
 end
 
-get %r{/([a-z]+)/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})} do |username, year, month, day|
+get %r{/^([a-z]+)/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})} do |username, year, month, day|
   begin
     load_user username
     @list = @user
@@ -75,7 +75,7 @@ get %r{/([a-z]+)/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})} do |username, year, month
   end
 end
 
-get %r{/([a-z]+)/([0-9]{4})/([0-9]{1,2})} do |username, year, month|
+get %r{/^([a-z]+)/([0-9]{4})/([0-9]{1,2})} do |username, year, month|
   begin
     load_user username
     @list = @user
@@ -103,7 +103,7 @@ get %r{/([a-z]+)/([0-9]{4})/([0-9]{1,2})} do |username, year, month|
   end
 end
 
-get %r{/([a-z]+)/([0-9]{4})} do |username, year|
+get %r{/^([a-z]+)/([0-9]{4})} do |username, year|
   begin
     load_user username
     @list = @user
