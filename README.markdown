@@ -73,3 +73,10 @@ modified somehow :-)"
 Any changes to photos will cause them to be re-imported using this task! You can run this every 5 minutes, hour, day, or whatever.
 If you rename photos, the filename on disk will have changed, so the script will remove the old filename and re-download the photo.
 
+Todo
+----
+
+* Add support for storing photos on S3, Dropbox, etc. (Technically this is currently possible via something like http://code.google.com/p/s3fs/)
+* Download favorited photos (must be careful about licensing for photos that are not your own)
+* Search
+* Display videos with an embedded player (videos are currently downloaded, but a thumbnail is shown)
