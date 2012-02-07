@@ -4,6 +4,10 @@ Flickr Archivr
 This project is meant to back up a single user's Flickr photo stream. It can also serve as a public web mirror of the user's Flickr
 photos and sets.
 
+![Flickr Archivr Screenshot](http://aaronpk.github.com/flickr-archivr-photostream.png "Flickr Archivr Screenshot")
+
+![Flickr Archivr Screenshot](http://aaronpk.github.com/flickr-archivr-one-photo.png "Flickr Archivr Screenshot")
+
 
 Installation
 ------------
