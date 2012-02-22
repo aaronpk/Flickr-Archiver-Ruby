@@ -80,3 +80,4 @@ Todo
 * Download favorited photos (must be careful about licensing for photos that are not your own)
 * Search
 * Display videos with an embedded player (videos are currently downloaded, but a thumbnail is shown)
+* Update to Bootstrap 2.0 template
