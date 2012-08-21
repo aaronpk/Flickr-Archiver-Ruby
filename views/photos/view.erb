@@ -26,10 +26,10 @@
       <% if @photo.latitude %>
         <a href="http://open.mapquest.com/?q=<%=@photo.latitude%>,<%=@photo.longitude%>" class="photo_map">
           <span class="map" id="photo_map_far">
-            <img src="http://open.mapquestapi.com/staticmap/v3/getmap?center=<%=@photo.latitude%>,<%=@photo.longitude%>&amp;zoom=3&amp;size=280,180&amp;type=map&amp;imagetype=png&amp;pois=1,<%=@photo.latitude%>,<%=@photo.longitude%>,0,0" width="280" height="180" alt="<%= "#{@photo.latitude}, #{@photo.longitude}" %>" />
+            <img src="http://open.mapquestapi.com/staticmap/v4/getmap?center=<%=@photo.latitude%>,<%=@photo.longitude%>&amp;zoom=3&amp;size=280,180&amp;type=map&amp;imagetype=png&amp;pois=1,<%=@photo.latitude%>,<%=@photo.longitude%>,0,0" width="280" height="180" alt="<%= "#{@photo.latitude}, #{@photo.longitude}" %>" />
           </span>
           <span class="map" id="photo_map_near">
-            <img src="http://open.mapquestapi.com/staticmap/v3/getmap?center=<%=@photo.latitude%>,<%=@photo.longitude%>&amp;zoom=<%= [15,@photo.accuracy].min %>&amp;size=280,180&amp;type=map&amp;imagetype=png&amp;pois=1,<%=@photo.latitude%>,<%=@photo.longitude%>,0,0" width="280" height="180" alt="<%= "#{@photo.latitude}, #{@photo.longitude}" %>" />
+            <img src="http://open.mapquestapi.com/staticmap/v4/getmap?center=<%=@photo.latitude%>,<%=@photo.longitude%>&amp;zoom=<%= [15,@photo.accuracy].min %>&amp;size=280,180&amp;type=map&amp;imagetype=png&amp;pois=1,<%=@photo.latitude%>,<%=@photo.longitude%>,0,0" width="280" height="180" alt="<%= "#{@photo.latitude}, #{@photo.longitude}" %>" />
           </span>
         </a>
       <% end %>
