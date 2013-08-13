@@ -1,4 +1,5 @@
-source :rubygems
+source "http://rubygems.org"
+
 gem 'yajl-ruby',           '0.8.2',        :require => 'yajl/json_gem'
 
 gem 'sinatra',             '1.3.2'
