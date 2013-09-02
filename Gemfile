@@ -1,4 +1,4 @@
-source "http://rubygems.org"
+source "https://rubygems.org"
 
 gem 'yajl-ruby',           '0.8.2',        :require => 'yajl/json_gem'
 
