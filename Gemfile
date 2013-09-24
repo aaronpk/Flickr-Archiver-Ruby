@@ -20,6 +20,7 @@ gem 'rake'
 gem 'hashie'
 
 gem 'flickraw'
+gem 'thin'
 
 group :development do
   gem 'shotgun',                     :require => nil
