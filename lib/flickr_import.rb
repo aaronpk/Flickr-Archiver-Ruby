@@ -1,5 +1,10 @@
 class FlickrImport
 
+  # Extra fields to request from the flickr API for each photo
+  EXTRAS = 'description,license,date_upload,date_taken,owner_name,'\
+           'original_format,last_update,geo,tags,machine_tags,o_dims,views,'\
+           'media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
+
   def self.test(args)
     puts "Starting import for user: #{args.username}"
     @user = User.first :username => args.username
@@ -14,9 +19,14 @@ class FlickrImport
     photosPerPage = 3
 
     if mode == 'import'
-      photos = @flickr.people.getPhotos :user_id => "me", :per_page => photosPerPage, :max_upload_date => startTimestamp, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
+      photos = @flickr.people.getPhotos :user_id => "me",
+                                        :per_page => photosPerPage,
+                                        :max_upload_date => startTimestamp,
+                                        :extras => EXTRAS
     else
-      photos = @flickr.photos.recentlyUpdated :min_date => startTimestamp, :per_page => photosPerPage, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
+      photos = @flickr.photos.recentlyUpdated :min_date => startTimestamp,
+                                              :per_page => photosPerPage,
+                                              :extras => EXTRAS
     end
 
     totalPages = photos.pages
@@ -27,9 +37,16 @@ class FlickrImport
 
       if page > 0
         if mode == 'import'
-          photos = @flickr.people.getPhotos :user_id => "me", :page => page, :per_page => photosPerPage, :max_upload_date => startTimestamp, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
+          photos = @flickr.people.getPhotos :user_id => "me",
+                                            :page => page,
+                                            :per_page => photosPerPage,
+                                            :max_upload_date => startTimestamp,
+                                            :extras => EXTRAS
         else
-          photos = @flickr.photos.recentlyUpdated :min_date => startTimestamp, :page => page, :per_page => photosPerPage, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
+          photos = @flickr.photos.recentlyUpdated :min_date => startTimestamp,
+                                                  :page => page,
+                                                  :per_page => photosPerPage,
+                                                  :extras => EXTRAS
         end
       end
 
@@ -88,9 +105,14 @@ class FlickrImport
     photosPerPage = 100
 
     if mode == 'import'
-      photos = @flickr.people.getPhotos :user_id => "me", :per_page => photosPerPage, :max_upload_date => startTimestamp, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
+      photos = @flickr.people.getPhotos :user_id => "me",
+                                        :per_page => photosPerPage,
+                                        :max_upload_date => startTimestamp,
+                                        :extras => EXTRAS
     else
-      photos = @flickr.photos.recentlyUpdated :min_date => startTimestamp, :per_page => photosPerPage, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
+      photos = @flickr.photos.recentlyUpdated :min_date => startTimestamp,
+                                              :per_page => photosPerPage,
+                                              :extras => EXTRAS
     end
 
     totalPages = photos.pages
@@ -104,9 +126,16 @@ class FlickrImport
 
       if page > 1
         if mode == 'import'
-          photos = @flickr.people.getPhotos :user_id => "me", :page => page, :per_page => photosPerPage, :max_upload_date => startTimestamp, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
+          photos = @flickr.people.getPhotos :user_id => "me",
+                                            :page => page,
+                                            :per_page => photosPerPage,
+                                            :max_upload_date => startTimestamp,
+                                            :extras => EXTRAS
         else
-          photos = @flickr.photos.recentlyUpdated :min_date => startTimestamp, :page => page, :per_page => photosPerPage, :extras => 'description,license,date_upload,date_taken,owner_name,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_m,url_z,url_l,url_o'
+          photos = @flickr.photos.recentlyUpdated :min_date => startTimestamp,
+                                                  :page => page,
+                                                  :per_page => photosPerPage,
+                                                  :extras => EXTRAS
         end
       end
 
