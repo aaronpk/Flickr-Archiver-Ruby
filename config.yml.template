@@ -3,7 +3,7 @@ development:
   flickr_consumer_key:
   flickr_consumer_secret:
   ga_id:
-  photo_root: /Users/you/Pictures/Flickr/
+  photo_root: /Users/you/Flickr-Archiver/public/images/
   photo_url_root: /images/
   allow_create_users: true
 production:
@@ -11,6 +11,6 @@ production:
   flickr_consumer_key:
   flickr_consumer_secret:
   ga_id:
-  photo_root: /Users/you/Pictures/Flickr/
+  photo_root: /Users/you/Flickr-Archiver/public/images/
   photo_url_root: /images/
   allow_create_users: true

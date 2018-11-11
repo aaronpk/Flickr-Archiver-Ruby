@@ -22,7 +22,10 @@ Installation
 
 3) Create a Flickr app: http://www.flickr.com/services/apps/create/
 
-4) Edit config.yml to include your Flickr consumer key and secret, and set the folder where you want to store the downloaded images
+4) Copy config.yml.template to config.yml. Edit it to include your Flickr
+   consumer key and secret, and to set the folder where you want to store the
+   downloaded images. This should be in the "public" directory if you want
+   them served automatically by the application's web server.
 
 5) Install dependancies with Bundler:
 
