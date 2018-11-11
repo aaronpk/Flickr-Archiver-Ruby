@@ -43,7 +43,7 @@ Installation
     $ bundle exec thin start -e production
     Look at the documentation for thin's command line. You can configure for multiple workers, etc..
 
-That's it! Visit http://localhost:9292/ and sign in with your Flickr account!
+That's it! Visit http://localhost:3000/ and sign in with your Flickr account!
 
 
 Initial Import
@@ -54,11 +54,11 @@ is done with a rake task:
 
     $ rake flickr:import[username]
 
-After this finishes, you should have a complete archive of your Flickr stream. Visit http://localhost:9292/username and you 
-should see everything there. 
+After this finishes, you should have a complete archive of your Flickr stream. Visit http://localhost:3030/username and you
+should see everything there.
 
-If this errored out you can safely restart it and it will continue where it left off. This is accomplished by using the 
-`import_timestamp` field on the `users` table. After this has finished successfully, you should update the field to the 
+If this errored out you can safely restart it and it will continue where it left off. This is accomplished by using the
+`import_timestamp` field on the `users` table. After this has finished successfully, you should update the field to the
 timestamp of the most recent photo in your stream. You can do this with the following SQL command:
 
     UPDATE users SET import_timestamp = (SELECT UNIX_TIMESTAMP(MAX(date_uploaded)) FROM photos WHERE user_id = 1) WHERE id = 1

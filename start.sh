@@ -1,7 +1,7 @@
 
 if [ $# -eq 0 ] ; then
   echo Starting in development mode...
-  bundle exec shotgun -P public -p 9292
+  bundle exec shotgun -P public -p 3000
   exit 0
 fi
 
