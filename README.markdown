@@ -12,26 +12,32 @@ photos and sets.
 Installation
 ------------
 
-1) Install Bundler:
+1) Clone the project:
+
+    $ git clone git@github.com:aaronpk/Flickr-Archiver.git
+
+2) Install Bundler:
 
     $ gem install bundler
 
-2) Clone the project:
-
-    $ git clone git@github.com:aaronpk/Flickr-Archivr.git
-
 3) Create a Flickr app: http://www.flickr.com/services/apps/create/
 
-4) Copy config.yml.template to config.yml. Edit it to include your Flickr
-   consumer key and secret, and to set the folder where you want to store the
+4) Create a mysql database for your photo archive.
+
+5) Copy config.yml.template to config.yml. Edit it to include your Flickr
+   consumer key and secret, database connection details, and to set the folder where you want to store the
    downloaded images. This should be in the "public" directory if you want
    them served automatically by the application's web server.
 
-5) Install dependancies with Bundler:
+6) Install dependancies with Bundler:
 
     $ bundle install
 
-6) Start the server:
+7) Setup the database:
+
+    $ rake db:bootstrap
+
+8) Start the server:
 
     For development:
     $ bundle exec rackup -s thin
