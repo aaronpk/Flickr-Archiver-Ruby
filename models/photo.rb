@@ -29,6 +29,11 @@ class Photo
   property :friends, Boolean
   property :family, Boolean
 
+  property :geo_public,  Boolean
+  property :geo_friend, Boolean
+  property :geo_family,  Boolean
+  property :geo_contact, Boolean
+
   property :url, String, :length => 255
 
   property :url_sq, String, :length => 255
