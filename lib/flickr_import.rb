@@ -339,6 +339,16 @@ class FlickrImport
           photoPlaces = @flickr.photos.geo.getLocation :photo_id => p.id
           if photoPlaces && photoPlaces.respond_to?('location')
             location = photoPlaces.location
+
+            geoPerms = @flickr.photos.geo.getPerms :photo_id => p.id
+            puts photoPlaces.to_hash.to_json
+            puts geoPerms.to_hash.to_json
+
+            photo.geo_public  = geoPerms.ispublic
+            photo.geo_friend  = geoPerms.isfriend
+            photo.geo_family  = geoPerms.isfamily
+            photo.geo_contact = geoPerms.iscontact
+
             if location.respond_to?('latitude')
               photo.latitude = location.latitude
               photo.longitude = location.longitude
