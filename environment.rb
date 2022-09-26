@@ -5,7 +5,11 @@ Bundler.require
 require File.join(File.expand_path(File.dirname(__FILE__)), 'helpers.rb')
 Dir.glob(['lib', 'models'].map! {|d| File.join File.expand_path(File.dirname(__FILE__)), d, '*.rb'}).each {|f| require f}
 
-SiteConfig = FlickrArchivr::SiteConfig.new YAML.load_file('config.yml')[Sinatra::Base.environment.to_s] if File.exists?('config.yml')
+if File.exists?('config.yml')
+  SiteConfig = FlickrArchivr::SiteConfig.new YAML.load_file('config.yml')[Sinatra::Base.environment.to_s]
+else
+  abort "You must create config.yml - copy and edit the example from config.yml.template to get started."
+end
 
 puts "Starting in #{Sinatra::Base.environment} mode.."
 

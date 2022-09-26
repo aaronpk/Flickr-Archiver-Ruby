@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-gem 'yajl-ruby',           '0.8.2',        :require => 'yajl/json_gem'
+gem 'yajl-ruby',           '~> 1.4.1',        :require => 'yajl/json_gem'
 
 gem 'sinatra',             '1.3.2'
 gem 'sinatra-contrib',     '1.3.1',        :require => 'sinatra/namespace'
@@ -24,7 +24,6 @@ gem 'thin'
 
 group :development do
   gem 'shotgun',                     :require => nil
-  gem 'ruby-debug19',                :require => 'ruby-debug'
 end
 
 group :test do
