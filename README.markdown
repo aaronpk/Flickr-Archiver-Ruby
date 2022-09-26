@@ -1,12 +1,16 @@
-Flickr Archivr
-==============
+Flickr Archiver
+===============
+
+UNMAINTAINED: I am leaving this project here for historical purposes. Since it was originally written in 2012, there are a lot of changes needed to get it working again today. I am also personally not using Flickr as my primary photo archive anymore, so I don't need the main features this project provides which is continually syncing a copy of a Flickr account. Please check out my new project, [Flickr Archivr](https://github.com/aaronpk/Flickr-Archivr), which archives an entire Flickr account to a static website.
+
+---
 
 This project is meant to back up a single user's Flickr photo stream. It can also serve as a public web mirror of the user's Flickr
 photos and sets.
 
-![Flickr Archivr Screenshot](http://aaronpk.github.com/flickr-archivr-photostream.png "Flickr Archivr Screenshot")
+![Flickr Archiver Screenshot](images/flickr-archivr-photostream.png "Flickr Archivr Screenshot")
 
-![Flickr Archivr Screenshot](http://aaronpk.github.com/flickr-archivr-one-photo.png "Flickr Archivr Screenshot")
+![Flickr Archiver Screenshot](images/flickr-archivr-one-photo.png "Flickr Archivr Screenshot")
 
 
 Installation
@@ -82,11 +86,3 @@ modified somehow :-)"
 Any changes to photos will cause them to be re-imported using this task! You can run this every 5 minutes, hour, day, or whatever.
 If you rename photos, the filename on disk will have changed, so the script will remove the old filename and re-download the photo.
 
-Todo
-----
-
-* Add support for storing photos on S3, Dropbox, etc. (Technically this is currently possible via something like http://code.google.com/p/s3fs/)
-* Download favorited photos (must be careful about licensing for photos that are not your own)
-* Search
-* Display videos with an embedded player (videos are currently downloaded, but a thumbnail is shown)
-* Update to Bootstrap 2.0 template
